@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#15273a">
-  <meta name="description" content="DDC Prod Expenses Management · Supabase · Création sécurisée des demandes de tournage.">
+  <meta name="description" content="DDC Prod Expenses Management · Supabase · Suivi sécurisé des demandes et notifications par rôle.">
   <title>DDC Prod Expenses Management</title>
   <style>
     :root{--navy:#122338;--navy2:#1e3750;--teal:#087e72;--bright:#0ba18d;--paper:#f3f6f9;--card:#fff;--text:#1b2d40;--sub:#708094;--line:#e0e8ed;--green:#04765f;--amber:#a76c06;--red:#bd4456;--ring:#0e9b8b44;--shadow:0 12px 32px #1223380a}
@@ -13,6 +13,15 @@
     @media(max-width:1130px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:26px 22px 50px}.top{padding:0 22px}}
     @media(max-width:770px){.aside{transform:translateX(-102%);transition:transform .2s;width:270px}.aside.open{transform:none}.mobilecover.show{display:block;position:fixed;inset:0;background:#0b2239aa;z-index:19}.appmain{margin-left:0;width:100%}.mobilebtn{display:inline-flex;border:0;border-radius:9px;padding:8px 10px;background:#e8f2f1;color:#125d56}.top{padding:0 15px;height:64px}.topname{font-size:12px}.topuser{gap:7px}.topuser .mini{display:none}.topuser .btn{min-height:36px;padding:7px 9px;font-size:11px}.wrap{padding:20px 14px 48px}.pageheading h1{font-size:26px}.pageheading{align-items:start;flex-wrap:wrap}.hero{padding:22px;display:block}.hero h2{font-size:21px}.hero .btn{margin-top:16px}.stats{gap:9px}.stat{padding:15px}.stat strong{font-size:21px}.phead{padding:16px}.pbody{padding:16px}.table-scroll{display:none}.listcards{display:block}.formgrid{grid-template-columns:1fr;gap:15px}.wide{grid-column:auto}.formfoot{align-items:stretch;flex-direction:column}.formfoot .btn{width:100%}.stepgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.dialog{max-height:92vh;border-radius:18px 18px 0 0}.overlay{padding:0;align-items:end}.dhead{padding:18px}.dbody{padding:17px}.detailgrid{gap:13px}.toolbar select{width:calc(50% - 5px)}.toolbar input{width:100%;flex-basis:100%}.auth-card{padding:25px}}
     @media(max-width:350px){.stats{grid-template-columns:1fr 1fr}.pageheading h1{font-size:23px}.topname{max-width:115px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:9px;padding:5px 6px}.detailgrid{grid-template-columns:1fr}}
+
+    /* Étape 14C — centre de notifications dérivé des dossiers RLS visibles */
+    .navbtn{position:relative}.nav-count{margin-left:auto;display:inline-flex;min-width:22px;height:22px;padding:0 6px;align-items:center;justify-content:center;border-radius:99px;background:#d6f6ec;color:#075f53;font-weight:850;font-size:11px}
+    .navbtn.active .nav-count{background:#b9f3df}.topbell{position:relative;min-width:38px;height:38px;border:1px solid #d7e5e9;border-radius:11px;background:#f6fbfa;color:var(--teal);font-size:20px;display:grid;place-items:center}
+    .topbell:hover{background:#e8f4ef}.topbell .bubble{position:absolute;top:-6px;right:-7px;padding:0 5px;min-width:19px;height:19px;border-radius:12px;display:grid;place-items:center;background:#ba3b4d;color:#fff;font-size:10px;font-weight:800;border:2px solid #fff}
+    .notification-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:21px}.n-summary{border:1px solid var(--line);background:#fff;border-radius:14px;padding:17px;display:flex;justify-content:space-between;align-items:center;gap:12px}.n-summary b{font-size:14px}.n-summary small{display:block;color:var(--sub);margin-top:3px}.n-summary strong{font-size:25px;color:var(--teal)}
+    .n-section{margin-bottom:20px}.n-list{padding:8px 18px}.n-item{width:100%;background:#fff;border:0;border-bottom:1px solid var(--line);padding:16px 5px;text-align:left;display:flex;gap:13px;align-items:flex-start;color:var(--text)}.n-item:last-child{border-bottom:0}.n-item:hover{background:#f6fbfa;border-radius:9px}.n-item:focus-visible{outline:3px solid var(--ring)}.n-marker{display:grid;place-items:center;flex:0 0 35px;height:35px;border-radius:11px;background:#ecf6f4;color:var(--teal);font-size:18px;font-weight:800}.n-marker.urgent{background:#fff1ed;color:#ac5631}.n-body{flex:1;min-width:0}.n-body b{font-size:13px}.n-body p{font-size:12px;color:var(--sub);margin:5px 0 8px;line-height:1.55}.n-meta{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.n-arrow{color:var(--teal);align-self:center;font-size:18px}.n-empty{padding:28px 22px;color:var(--sub);font-size:12px}.n-empty strong{display:block;color:var(--text);font-size:14px}.notice-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.mini-tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:7px 10px;border-radius:9px;background:#fff;color:var(--sub);font-size:12px}
+    @media(max-width:1130px){.notification-overview{grid-template-columns:1fr 1fr}}
+    @media(max-width:770px){.notification-overview{grid-template-columns:1fr}.n-list{padding:5px 12px}.n-item{gap:9px;padding:13px 2px}.n-marker{width:29px;flex-basis:29px;height:29px;border-radius:8px;font-size:15px}.topbell{height:34px;min-width:34px;font-size:17px}.nav-count{margin-left:auto}}
   </style>
 </head>
 <body>
@@ -21,13 +30,13 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
-let token='',state=null,view='dashboard',selection=null,search='',filter='all',navOpen=false,busy=false,toastTimer;
+let token='',state=null,view='dashboard',selection=null,search='',filter='all',navOpen=false,busy=false,toastTimer,lastRefreshAt=0;
 const SUPABASE_URL='https://nxesaslonnkxvoyrrrfj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_m8-ByFHJArQSe9MThvLdnA_5y6dLuPX';
 const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
 }) ?? null;
-const PHASE_TEST = 'Autovalidation Roger / Mamihasina : accord préalable déclaré hors application. Tests fictifs uniquement.';
+const PHASE_TEST = 'Centre de notifications actif. Les actions restent contrôlées par Supabase. Utilisez des données fictives pendant les tests.';
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -271,12 +280,104 @@ function showLogin(message=''){
   })};
 }
 async function load(){
-  try{state=await call('getAppData');render()}
+  try{state=await call('getAppData');lastRefreshAt=Date.now();render()}
   catch(e){clearSession();showLogin(e.message&& !/Connexion requise/i.test(e.message)?e.message:'')}
 }
-function render(){if(!state){showLogin();return}const isFin=['finance','daf'].includes(state.user.role);const nav=[['dashboard','◫','Tableau de bord'],['requests','☷','Demandes'],['new','＋','Nouvelle demande']];const items=nav.map(([id,ico,label])=>`<button class="navbtn ${view===id?'active':''}" data-nav="${id}"><span class="ico">${ico}</span>${label}</button>`).join('');
-  $('#root').innerHTML=`<div class="layout"><div id="mobileCover" class="mobilecover ${navOpen?'show':''}" data-closemenu></div><aside id="aside" class="aside ${navOpen?'open':''}"><div class="logo"><span class="symbol">D</span><div><strong>DDC <span style="color:#67d5c2">PROD</span></strong><span>EXPENSES MANAGEMENT</span></div></div><small class="menu-label">Navigation</small>${items}<div class="sidebar-foot"><b style="color:#fff">${isFin?'Validation & contrôle':'Mes catégories autorisées'}</b><br>${isFin?'Suivi financier, justificatifs et historique des opérations.':state.owners.map(id=>`${id} · ${look(state.categories,'code',id,'libelle')}`).join(' / ')||'Aucune catégorie attribuée'}</div></aside><div class="appmain"><header class="top"><div style="display:flex;align-items:center;gap:11px"><button class="mobilebtn" data-menu aria-label="Ouvrir la navigation">☰</button><span class="topname">DDC Prod Expenses Management</span></div><div class="topuser"><span class="mini muted">${esc(state.user.role==='daf'?'DAF':state.user.role==='finance'?'Responsable financier':'Responsable de département')}</span><span class="avatar">${esc(state.user.nom.slice(0,1).toUpperCase())}</span><button class="btn small" data-logout>Déconnexion</button></div></header><main class="wrap"><div class="notice warn" role="status" style="margin-bottom:18px"><b>Workflow financier V5 activé.</b> Contrôle des justificatifs, retours de fonds et avances complémentaires disponibles. Utilisez des données fictives pendant les tests.</div>${view==='new'?newPage():view==='requests'?requestsPage():dashboardPage()}</main></div></div>`;
+
+// Les notifications représentent des actions en attente, calculées à partir des tables
+// déjà lues sous RLS. Elles ne créent ni privilège ni donnée financière supplémentaire.
+function getNotifications(){
+  if(!state)return [];
+  const fin=['finance','daf'].includes(state.user.role);
+  const notices=[];
+  const add=(n)=>notices.push(n);
+  const allReturns=state.returns||[];
+  const proofs=state.proofs||[];
+  for(const r of state.requests){
+    const owner=mine(r);
+    const paid=r.decaissement==='decaisse';
+    const ownName=person(r.demandeur_id);
+    const title=String(r.libelle||'Demande de dépense');
+    const rets=allReturns.filter(x=>x.demande_id===r.id).reduce((n,x)=>n+Number(x.montant_ariary||0),0);
+    const balance=Number(r.montant_decaisse_ariary||0)-Number(r.montant_justifie_ariary||0)-rets;
+    if(owner&&paid&&r.controle!=='conforme'){
+      if(r.controle==='a_corriger'){
+        add({id:'proof-correction:'+r.id,scope:'proofs',requestId:r.id,priority:1,actionable:true,title:'Justificatif à corriger',detail:`${title} · ${r.id}. Un contrôle a demandé une correction.${r.commentaire_controle?' Motif : '+r.commentaire_controle:''}`,amount:balance>0?balance:null,kind:'urgent',date:r.cree_le});
+      } else if(r.justificatif!=='envoye'&&balance>0){
+        add({id:'proof-missing:'+r.id,scope:'proofs',requestId:r.id,priority:1,actionable:true,title:'Justificatif à transmettre',detail:`${title} · ${r.id}. Il reste ${ar(balance)} à justifier ou restituer.`,kind:'urgent',date:r.cree_le});
+      } else if(r.justificatif==='envoye'&&r.controle==='a_verifier'){
+        add({id:'proof-checking:'+r.id,scope:'proofs',requestId:r.id,priority:6,actionable:false,title:'Justificatif en cours de contrôle',detail:`${title} · ${r.id}. Pièce envoyée : vérification financière en attente.`,kind:'info',date:r.cree_le});
+      }
+    }
+    if(fin){
+      if(r.validation==='en_cours'){
+        add({id:'approval-request:'+r.id,scope:'approvals',requestId:r.id,priority:1,actionable:true,title:'Demande à valider',detail:`${ownName} · ${title} · ${ar(r.montant_ariary)}.`,kind:'urgent',date:r.cree_le});
+      }
+      if(r.validation==='validee'&&r.decaissement==='en_attente'){
+        add({id:'finance-payout:'+r.id,scope:'finance',requestId:r.id,priority:2,actionable:true,title:'Décaissement à enregistrer',detail:`${ownName} · ${title} · ${ar(r.montant_ariary)}.`,kind:'pending',date:r.cree_le});
+      }
+      if(paid&&r.justificatif==='envoye'&&r.controle==='a_verifier'&&proofs.some(p=>p.demande_id===r.id)){
+        add({id:'finance-review:'+r.id,scope:'finance',requestId:r.id,priority:1,actionable:true,title:'Justificatifs à contrôler',detail:`${ownName} · ${title} · ${r.id}.`,kind:'pending',date:r.cree_le});
+      }
+    }
+  }
+  if(fin){
+    for(const c of state.supplements||[]){
+      const r=byId(c.demande_id);
+      if(!r||r.controle==='conforme')continue;
+      if(c.statut==='en_attente'){
+        add({id:'approval-supplement:'+c.id,scope:'approvals',requestId:r.id,priority:1,actionable:true,title:'Avance complémentaire à valider',detail:`${person(r.demandeur_id)} · ${r.id} · ${ar(c.montant_ariary)}. ${c.motif||''}`,kind:'urgent',date:c.demande_le});
+      } else if(c.statut==='validee'){
+        add({id:'finance-supplement:'+c.id,scope:'finance',requestId:r.id,priority:2,actionable:true,title:'Complément à décaisser',detail:`${person(r.demandeur_id)} · ${r.id} · ${ar(c.montant_ariary)}.`,kind:'pending',date:c.demande_le});
+      }
+    }
+  }
+  return notices.sort((a,b)=>a.priority-b.priority||String(b.date||'').localeCompare(String(a.date||'')));
+}
+function notificationCounts(items=getNotifications()){
+  const action=items.filter(n=>n.actionable);
+  return {all:action.length,proofs:action.filter(n=>n.scope==='proofs').length,approvals:action.filter(n=>n.scope==='approvals').length,finance:action.filter(n=>n.scope==='finance').length};
+}
+function notificationItem(n){
+  return `<button type="button" class="n-item" data-open="${esc(n.requestId)}" aria-label="Ouvrir ${esc(n.title)} pour ${esc(n.requestId)}"><span class="n-marker ${n.kind==='urgent'?'urgent':''}" aria-hidden="true">${n.scope==='proofs'?'▤':n.scope==='approvals'?'✓':'◈'}</span><span class="n-body"><b>${esc(n.title)}</b><p>${esc(n.detail)}</p><span class="n-meta">${badge(n.actionable?'en_attente':'a_verifier')}<span class="mini muted">${esc(n.requestId)} · ${dateText(n.date)}</span></span></span><span class="n-arrow" aria-hidden="true">›</span></button>`;
+}
+function notificationSection(label,subtitle,items,emptyText){
+  return `<section class="panel n-section"><div class="phead"><div><h2>${esc(label)} <span class="badge info" style="margin-left:7px">${items.filter(x=>x.actionable).length} à traiter</span></h2><div class="mini muted">${esc(subtitle)}</div></div></div>${items.length?`<div class="n-list">${items.map(notificationItem).join('')}</div>`:`<div class="n-empty"><strong>Tout est à jour</strong>${esc(emptyText)}</div>`}</section>`;
+}
+function notificationsPage(type='notifications'){
+  const items=getNotifications(),counts=notificationCounts(items),fin=['finance','daf'].includes(state.user.role);
+  const title={notifications:'Centre de notifications',proofs:'Mes justificatifs',approvals:'Demandes à valider',financeTasks:'Opérations financières'}[type]||'Notifications';
+  const intro='Alertes calculées depuis les dossiers Supabase visibles par votre compte. Ouvrez une ligne pour agir dans le dossier.';
+  let content='';
+  if(type==='notifications'){
+    content=`<div class="notification-overview"><article class="n-summary"><div><b>Justificatifs</b><small>Mes pièces à transmettre ou corriger</small></div><strong>${counts.proofs}</strong></article><article class="n-summary"><div><b>Validations</b><small>Demandes et compléments</small></div><strong>${counts.approvals}</strong></article><article class="n-summary"><div><b>Opérations financières</b><small>Décaissements et contrôles</small></div><strong>${counts.finance}</strong></article></div>`;
+    content+=notificationSection('Mes justificatifs','Dossiers à régulariser et documents envoyés',items.filter(x=>x.scope==='proofs'),'Aucun justificatif en attente.');
+    if(fin){content+=notificationSection('À valider','Demandes et avances complémentaires',items.filter(x=>x.scope==='approvals'),'Aucune validation en attente.');content+=notificationSection('À décaisser / contrôler','Décaissements et justificatifs financiers',items.filter(x=>x.scope==='finance'),'Aucune opération financière en attente.');}
+  }else if(type==='proofs'){
+    const todo=items.filter(x=>x.scope==='proofs'&&x.actionable),progress=items.filter(x=>x.scope==='proofs'&&!x.actionable);
+    content=notificationSection('À transmettre ou corriger','Ces dossiers nécessitent votre intervention',todo,'Aucune pièce manquante sur vos demandes.');
+    content+=notificationSection('En attente du contrôle','Justificatifs déjà transmis',progress,'Aucun justificatif en attente de vérification.');
+  }else if(type==='approvals'){
+    content=notificationSection('Demandes à valider','Demandes initiales et avances complémentaires',fin?items.filter(x=>x.scope==='approvals'):[],'Aucune demande à valider.');
+  }else if(type==='financeTasks'){
+    content=notificationSection('Décaissements et contrôles','Paiements à enregistrer et justificatifs à contrôler',fin?items.filter(x=>x.scope==='finance'):[],'Aucune opération financière en attente.');
+  }
+  return `${heading('Suivi des actions',title,intro,`<button type="button" class="btn soft" data-refresh>⟳ Actualiser</button>`)}<div class="notice-tags"><span class="mini-tag">● ${counts.all} action${counts.all>1?'s':''} en attente</span><span class="mini-tag">↻ Vérification automatique toutes les 2 minutes</span></div>${content}`;
+}
+async function refreshNotifications(force=false){
+  if(!state||(!force&&busy)||document.hidden||document.querySelector('#dialogLayer'))return false;
+  // Ne jamais effacer un formulaire en cours de saisie lors du rafraîchissement automatique.
+  if(!force&&(view==='new'||document.activeElement?.matches?.('input,textarea,select')))return false;
+  try{const oldId=state.user.id;const fresh=await getAppData();if(fresh.user.id===oldId){state=fresh;lastRefreshAt=Date.now();render();return true;}}
+  catch(e){console.warn('Actualisation des notifications :',e.message||e);if(force)throw e;}
+  return false;
+}
+
+function render(){if(!state){showLogin();return}const isFin=['finance','daf'].includes(state.user.role);const counts=notificationCounts();const nav=[['dashboard','◫','Tableau de bord',0],['requests','☷','Demandes',0],['proofs','▤','Justificatifs',counts.proofs],...(isFin?[['approvals','✓','À valider',counts.approvals],['financeTasks','◈','Opérations financières',counts.finance]]:[]),['notifications','🔔','Notifications',counts.all],['new','＋','Nouvelle demande',0]];const items=nav.map(([id,ico,label,count])=>`<button class="navbtn ${view===id?'active':''}" data-nav="${id}"><span class="ico">${ico}</span>${label}${count?`<span class="nav-count" aria-label="${count} action(s) en attente">${count>99?'99+':count}</span>`:''}</button>`).join('');
+  $('#root').innerHTML=`<div class="layout"><div id="mobileCover" class="mobilecover ${navOpen?'show':''}" data-closemenu></div><aside id="aside" class="aside ${navOpen?'open':''}"><div class="logo"><span class="symbol">D</span><div><strong>DDC <span style="color:#67d5c2">PROD</span></strong><span>EXPENSES MANAGEMENT</span></div></div><small class="menu-label">Navigation</small>${items}<div class="sidebar-foot"><b style="color:#fff">${isFin?'Validation & contrôle':'Mes catégories autorisées'}</b><br>${isFin?'Suivi financier, justificatifs et historique des opérations.':state.owners.map(id=>`${id} · ${look(state.categories,'code',id,'libelle')}`).join(' / ')||'Aucune catégorie attribuée'}</div></aside><div class="appmain"><header class="top"><div style="display:flex;align-items:center;gap:11px"><button class="mobilebtn" data-menu aria-label="Ouvrir la navigation">☰</button><span class="topname">DDC Prod Expenses Management</span></div><div class="topuser"><button type="button" class="topbell" data-notifications aria-label="Ouvrir les notifications, ${counts.all} action(s) à traiter" title="Notifications">🔔${counts.all?`<span class="bubble">${counts.all>99?'99+':counts.all}</span>`:''}</button><span class="mini muted">${esc(state.user.role==='daf'?'DAF':state.user.role==='finance'?'Responsable financier':'Responsable de département')}</span><span class="avatar">${esc(state.user.nom.slice(0,1).toUpperCase())}</span><button class="btn small" data-logout>Déconnexion</button></div></header><main class="wrap"><div class="notice warn" role="status" style="margin-bottom:18px"><b>Workflow financier V5 activé.</b> Contrôle des justificatifs, retours de fonds et avances complémentaires disponibles. Utilisez des données fictives pendant les tests.</div>${view==='new'?newPage():view==='requests'?requestsPage():['proofs','approvals','financeTasks','notifications'].includes(view)?notificationsPage(view):dashboardPage()}</main></div></div>`;
   document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{view=b.dataset.nav;navOpen=false;render()});
+  $('[data-notifications]')?.addEventListener('click',()=>{view='notifications';navOpen=false;render()});
+  $('[data-refresh]')?.addEventListener('click',()=>runAction(async()=>{if(await refreshNotifications(true))toast('Notifications actualisées.')}));
   $('[data-menu]')?.addEventListener('click',()=>{navOpen=!navOpen;render()});
   $('[data-closemenu]')?.addEventListener('click',()=>{navOpen=false;render()});
   $('[data-logout]').onclick=()=>runAction(async()=>{await call('logout',token);clearSession();showLogin();toast('Vous êtes déconnecté.')});
@@ -287,7 +388,7 @@ function render(){if(!state){showLogin();return}const isFin=['finance','daf'].in
 }
 function heading(k,title,desc,extra=''){return `<section class="pageheading"><div><div class="caps">${esc(k)}</div><h1>${esc(title)}</h1><p>${esc(desc)}</p></div>${extra}</section>`}
 function stats(){const r=state.requests;const amount=r.filter(x=>x.validation==='validee').reduce((s,x)=>s+Number(x.montant_ariary||0),0)+(state.supplements||[]).filter(x=>['validee','decaissee'].includes(x.statut)).reduce((s,x)=>s+Number(x.montant_ariary||0),0);return [{label:'Demandes',value:r.length,desc:'Dossiers visibles'},{label:'En attente de validation',value:r.filter(x=>x.validation==='en_cours').length,desc:'À traiter'},{label:'Total validé',value:ar(amount),desc:'Initial + compléments approuvés'},{label:'Justificatifs à vérifier',value:r.filter(x=>x.controle==='a_verifier').length,desc:'Contrôle restant'}].map(c=>`<article class="stat"><label>${esc(c.label)}</label><strong style="font-size:${String(c.value).length>12?'19':'26'}px">${esc(c.value)}</strong><small>${esc(c.desc)}</small></article>`).join('')}
-function dashboardPage(){const isFin=['finance','daf'].includes(state.user.role);const latest=[...state.requests].sort((a,b)=>String(b.cree_le).localeCompare(String(a.cree_le))).slice(0,7);return `<section class="hero"><div><div class="caps bright">Espace ${isFin?'financier':'production'}</div><h2>Bonjour ${esc(state.user.nom)}.</h2><p>${isFin?'Validez les dépenses, suivez les décaissements et contrôlez les justificatifs dans un seul espace.':'Déposez vos demandes par compte budgétaire et suivez chaque étape jusqu’au contrôle final.'}</p></div><button class="btn" data-go="new">＋ Nouvelle demande</button></section><section class="stats">${stats()}</section><section class="panel"><div class="phead"><div><h2>Demandes récentes</h2><div class="mini muted">Votre suivi sécurisé depuis Supabase</div></div><button class="btn small" data-go="requests">Tout afficher</button></div>${requestTables(latest)}</section>${state.user.role==='daf'?`<div style="margin-top:18px" class="notice">Vous pouvez ajouter un tournage à tout moment : <button class="btn small soft" data-addproject>＋ Ajouter un projet</button></div>`:''}`}
+function dashboardPage(){const isFin=['finance','daf'].includes(state.user.role);const pending=getNotifications().filter(n=>n.actionable);const priority=pending.length?`<section class="panel n-section"><div class="phead"><div><h2>Actions à traiter <span class="badge pending" style="margin-left:7px">${pending.length}</span></h2><div class="mini muted">Notifications liées à votre rôle</div></div><button class="btn small soft" data-go="notifications">Voir tout</button></div><div class="n-list">${pending.slice(0,3).map(notificationItem).join('')}</div></section>`:'';const latest=[...state.requests].sort((a,b)=>String(b.cree_le).localeCompare(String(a.cree_le))).slice(0,7);return `<section class="hero"><div><div class="caps bright">Espace ${isFin?'financier':'production'}</div><h2>Bonjour ${esc(state.user.nom)}.</h2><p>${isFin?'Validez les dépenses, suivez les décaissements et contrôlez les justificatifs dans un seul espace.':'Déposez vos demandes par compte budgétaire et suivez chaque étape jusqu’au contrôle final.'}</p></div><button class="btn" data-go="new">＋ Nouvelle demande</button></section>${priority}<section class="stats">${stats()}</section><section class="panel"><div class="phead"><div><h2>Demandes récentes</h2><div class="mini muted">Votre suivi sécurisé depuis Supabase</div></div><button class="btn small" data-go="requests">Tout afficher</button></div>${requestTables(latest)}</section>${state.user.role==='daf'?`<div style="margin-top:18px" class="notice">Vous pouvez ajouter un tournage à tout moment : <button class="btn small soft" data-addproject>＋ Ajouter un projet</button></div>`:''}`}
 function requestTables(data){if(!data.length)return '<div class="empty"><strong>Aucune demande pour le moment</strong><p>Les nouvelles demandes enregistrées dans Supabase apparaîtront ici.</p></div>';const header='<thead><tr><th>Référence / demande</th><th>Demandeur</th><th>Compte</th><th>Montant initial</th><th>Validation</th><th>Décaissement</th><th>Justificatif</th></tr></thead>';const body=data.map(r=>`<tr data-id="${esc(r.id)}" data-open="${esc(r.id)}"><td><b>${esc(r.id)}</b><div class="muted tiny">${esc(r.libelle)}</div></td><td>${esc(person(r.demandeur_id))}</td><td>${esc(r.compte_code)}</td><td><b>${esc(ar(r.montant_ariary))}</b></td><td>${badge(r.validation)}</td><td>${badge(r.decaissement)}</td><td>${badge(r.justificatif)}</td></tr>`).join('');const mobile=data.map(r=>`<article class="req-card" data-open="${esc(r.id)}"><div class="line"><div><b>${esc(r.id)}</b><div class="tiny muted">${esc(person(r.demandeur_id))} · ${esc(r.compte_code)}</div></div><b>${esc(ar(r.montant_ariary))}</b></div><p>${esc(r.libelle)}</p><div class="foot">${badge(r.validation)}${badge(r.decaissement)}${badge(r.justificatif)}</div></article>`).join('');return `<div class="table-scroll"><table>${header}<tbody>${body}</tbody></table></div><div class="listcards" style="padding:12px">${mobile}</div>`}
 function requestsPage(){let data=[...state.requests].sort((a,b)=>String(b.cree_le).localeCompare(String(a.cree_le)));if(search){const q=search.toLowerCase();data=data.filter(r=>[r.id,r.libelle,person(r.demandeur_id),r.compte_code,catName(r)].join(' ').toLowerCase().includes(q))}if(filter!=='all')data=data.filter(r=>r.validation===filter||r.decaissement===filter||r.controle===filter);return `${heading('Traçabilité','Toutes les demandes','Consultez les décisions, décaissements et justificatifs.',`<button class="btn primary" data-go="new">＋ Nouvelle demande</button>`)}<div class="toolbar"><input id="searchReq" class="control" placeholder="Rechercher un numéro, un compte, un libellé…" value="${esc(search)}"><select class="control" id="filterReq"><option value="all">Tous les statuts</option><option value="en_cours" ${filter==='en_cours'?'selected':''}>Validation en cours</option><option value="validee" ${filter==='validee'?'selected':''}>Validées</option><option value="refusee" ${filter==='refusee'?'selected':''}>Refusées</option><option value="decaisse" ${filter==='decaisse'?'selected':''}>Décaissées</option><option value="a_verifier" ${filter==='a_verifier'?'selected':''}>Justificatifs à vérifier</option></select></div><div class="panel">${requestTables(data)}</div>`}
 function wireSearch(){const q=$('#searchReq');q?.addEventListener('input',e=>{search=e.target.value;const pos=e.target.selectionStart;render();$('#searchReq')?.focus();$('#searchReq')?.setSelectionRange(pos,pos)});$('#filterReq')?.addEventListener('change',e=>{filter=e.target.value;render()})}
@@ -400,7 +501,10 @@ function openFinancialReview(type,r){
 }
 function readBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||'').split(',')[1]||'');reader.onerror=()=>reject(Error('Lecture du fichier impossible.'));reader.readAsDataURL(file)})}
 function createProjectPrompt(){const name=prompt('Nom du nouveau tournage / projet :');if(!name)return;runAction(async()=>{await call('addProject',token,name);toast('Projet créé.');await load()})}
-(async function start(){if(!supabaseClient){showLogin('Impossible de charger la librairie Supabase. Veuillez vérifier votre connexion.');return;}await load()})()
+(async function start(){if(!supabaseClient){showLogin('Impossible de charger la librairie Supabase. Veuillez vérifier votre connexion.');return;}await load();
+  setInterval(()=>{if(state&&Date.now()-lastRefreshAt>=120000)refreshNotifications()},120000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&state&&Date.now()-lastRefreshAt>=60000)refreshNotifications()});
+})()
 </script>
 </body>
 </html>
