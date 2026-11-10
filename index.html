@@ -98,7 +98,17 @@ function showLogin(message=''){
   $('#loginForm').onsubmit=e=>{e.preventDefault();runAction(async()=>{
     const email=$('#loginEmail').value.trim(),password=$('#loginPassword').value;
     const {error}=await ensureClient().auth.signInWithPassword({email,password});
-    if(error)throw Error('Connexion refusée. Vérifiez votre e-mail, votre mot de passe et la confirmation du compte.');
+    if(error){
+      const code=String(error.code||'').toLowerCase();
+      const detail=String(error.message||'Erreur inconnue');
+      if(code==='invalid_credentials'||/invalid login credentials/i.test(detail)){
+        throw Error('Supabase : identifiants non reconnus. Vérifiez le mot de passe et l’adresse e-mail du compte créé dans Authentication > Users.');
+      }
+      if(code==='email_not_confirmed'||/email not confirmed/i.test(detail)){
+        throw Error('Supabase : adresse e-mail non confirmée. Vérifiez la fiche du compte dans Authentication > Users.');
+      }
+      throw Error('Connexion Supabase : '+detail+(code?' ('+code+')':''));
+    }
     await load();
   })};
 }
