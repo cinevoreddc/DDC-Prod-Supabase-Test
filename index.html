@@ -1,339 +1,393 @@
--- DDC PROD EXPENSES MANAGEMENT — ETAPE 11B
--- Avances complementaires sur une demande DEJA validee et decaissee.
--- A executer apres l'etape 11A, dans Supabase > SQL Editor.
--- SAUVEGARDE : exporter vos donnees financieres AVANT la migration.
--- Le script n'effectue aucun mouvement bancaire ou de Mobile Money.
--- Aucun montant de demande originale ni justification deja approuvee n'est efface.
--- TEST : n'utiliser que des dossiers fictifs.
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#15273a">
+  <meta name="description" content="DDC Prod Expenses Management · Supabase · Création sécurisée des demandes de tournage.">
+  <title>DDC Prod Expenses Management</title>
+  <style>
+    :root{--navy:#122338;--navy2:#1e3750;--teal:#087e72;--bright:#0ba18d;--paper:#f3f6f9;--card:#fff;--text:#1b2d40;--sub:#708094;--line:#e0e8ed;--green:#04765f;--amber:#a76c06;--red:#bd4456;--ring:#0e9b8b44;--shadow:0 12px 32px #1223380a}
+    *{box-sizing:border-box}html{font:14px/1.45 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--text);-webkit-text-size-adjust:100%}body{margin:0;background:var(--paper);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:wait;opacity:.55}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--ring);outline-offset:2px}a{color:var(--teal)}.hide{display:none!important}.muted{color:var(--sub)}.mini{font-size:12px}.tiny{font-size:11px}.caps{text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:750;color:var(--teal)}.btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:10px;padding:10px 15px;font-weight:720;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap}.btn:hover{background:#f5faf9}.btn.primary{background:var(--teal);border-color:var(--teal);color:white}.btn.primary:hover{background:#066c62}.btn.danger{color:var(--red);border-color:#eec8d0}.btn.soft{background:#edf6f4;border-color:#d0e8e1;color:var(--teal)}.btn.small{font-size:12px;padding:8px 11px;min-height:34px}.btn.full{width:100%}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field label{font-size:12px;font-weight:760}.control{border:1px solid #d9e3eb;border-radius:10px;background:#fff;min-height:44px;padding:11px 12px;outline:0;width:100%;color:var(--text)}textarea.control{resize:vertical;min-height:100px}.control:focus{border-color:#13a394;box-shadow:0 0 0 3px var(--ring)}.layout{display:flex;min-height:100vh}.aside{position:fixed;top:0;left:0;bottom:0;width:248px;background:linear-gradient(155deg,#142b42,#101d2d);color:#e5eef5;padding:26px 16px;display:flex;flex-direction:column;z-index:20}.logo{display:flex;gap:12px;align-items:center;padding:0 10px 28px}.symbol{width:43px;height:43px;border-radius:13px;background:linear-gradient(140deg,#15af9e,#057469);display:grid;place-items:center;color:#fff;font-size:22px;font-weight:900;box-shadow:0 8px 20px #099b8544}.logo strong{font-size:17px;letter-spacing:.03em;display:block}.logo span{font-size:9px;color:#b2c7d3;letter-spacing:.05em}.aside small.menu-label{padding:18px 13px 9px;letter-spacing:.13em;text-transform:uppercase;color:#718ca4;font-size:10px;font-weight:800}.navbtn{display:flex;align-items:center;gap:11px;color:#acc0d0;background:transparent;border:0;border-radius:11px;padding:12px 13px;width:100%;text-align:left;font-weight:670}.navbtn:hover{color:white;background:#223b53}.navbtn.active{color:#c4fff1;background:#1e4b4b;border-left:3px solid #18ba9d}.navbtn .ico{font-size:17px;width:21px;text-align:center}.sidebar-foot{margin-top:auto;border:1px solid #3c5267;border-radius:13px;padding:13px;font-size:11px;color:#c0cdd7;line-height:1.6}.appmain{margin-left:248px;width:calc(100% - 248px);min-width:0}.top{height:74px;background:#fff;border-bottom:1px solid var(--line);padding:0 30px;display:flex;align-items:center;justify-content:space-between;gap:15px}.topname{font-weight:800;font-size:13px}.topuser{display:flex;gap:12px;align-items:center}.avatar{width:34px;height:34px;border-radius:50%;background:#dff1ed;color:#137468;font-weight:800;display:grid;place-items:center}.wrap{max-width:1430px;margin:0 auto;padding:30px 30px 65px}.pageheading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:22px}.pageheading h1{font-size:30px;line-height:1.16;margin:6px 0 5px;letter-spacing:-.035em}.pageheading p{margin:0;color:var(--sub);font-size:13px}.hero{background:linear-gradient(115deg,#15374b,#0c5c57 70%,#0a8274);border-radius:18px;padding:28px 30px;color:white;display:flex;align-items:center;justify-content:space-between;gap:25px;overflow:hidden;position:relative;margin-bottom:20px}.hero::after{content:"";position:absolute;right:-105px;top:-130px;width:320px;height:320px;border:1px solid #ffffff22;border-radius:50%;box-shadow:0 0 0 60px #ffffff0b,0 0 0 119px #ffffff07}.hero>*{position:relative;z-index:1}.hero h2{font-size:24px;margin:7px 0 6px;letter-spacing:-.02em}.hero p{font-size:13px;line-height:1.6;color:#d4eee9;margin:0;max-width:620px}.hero .bright{color:#9ef5e0}.hero .btn{background:#fff;border:0;color:#09645c}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:21px}.stat,.panel{border:1px solid var(--line);background:white;border-radius:16px;box-shadow:var(--shadow)}.stat{padding:19px}.stat label{font-size:12px;color:var(--sub);display:block;font-weight:700}.stat strong{font-size:26px;display:block;margin:12px 0 4px;letter-spacing:-.035em}.stat small{color:#96a1af}.panel{overflow:hidden}.phead{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.phead h2{margin:0;font-size:15px}.pbody{padding:22px}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;text-align:left;min-width:790px}th{color:#8998a6;text-transform:uppercase;letter-spacing:.07em;font-size:10px;background:#f7f9fb;padding:12px 14px}td{border-top:1px solid #edf1f4;padding:15px 14px;font-size:12px}tr[data-id]{cursor:pointer}tr[data-id]:hover{background:#f7fcfb}.badge{display:inline-flex;align-items:center;gap:5px;font-weight:720;font-size:10px;border-radius:7px;padding:6px 8px;background:#eef2f5;color:#6d7e8b;white-space:nowrap}.badge:before{content:"";width:6px;height:6px;background:currentColor;border-radius:100%}.badge.ok{background:#e2f4ed;color:#13745b}.badge.no{background:#fcecef;color:#b44358}.badge.pending{background:#fff4df;color:#a66a0f}.badge.info{background:#e9f0fd;color:#426b9a}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 18px}.toolbar input{flex:1;min-width:180px}.toolbar select{width:170px}.listcards{display:none}.req-card{border:1px solid var(--line);background:#fff;border-radius:13px;padding:16px;margin-bottom:10px;box-shadow:0 8px 26px #1029380a;cursor:pointer}.req-card .line{display:flex;align-items:start;justify-content:space-between;gap:10px}.req-card p{color:var(--sub);margin:8px 0 12px;font-size:12px}.req-card .foot{display:flex;gap:6px;flex-wrap:wrap}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.wide{grid-column:1/-1}.formfoot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:24px;padding-top:21px;border-top:1px solid var(--line)}.price{font-weight:820;font-size:24px;letter-spacing:-.035em}.notice{border:1px solid #cce8e0;background:#effaf7;color:#286c60;border-radius:12px;padding:13px 15px;line-height:1.55;font-size:12px}.notice.warn{background:#fff8e7;border-color:#f3e3b8;color:#866621}.empty{text-align:center;padding:42px 20px;color:var(--sub)}.empty strong{color:var(--text);display:block}.empty p{margin:8px auto;max-width:420px}.overlay{position:fixed;inset:0;background:#0d1e31a6;z-index:50;display:flex;justify-content:center;align-items:center;padding:18px}.dialog{background:white;border-radius:19px;max-width:720px;width:100%;max-height:calc(100vh - 36px);overflow:auto;box-shadow:0 20px 75px #08182755}.dhead{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;align-items:start;justify-content:space-between;gap:15px;position:sticky;top:0;background:#fff;z-index:3}.dhead h2{font-size:21px;margin:5px 0 0}.dbody{padding:23px 24px 28px}.close{font-size:22px;line-height:1;width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:white}.detailgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;margin:23px 0}.detailgrid .lab{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#8b99a7;font-weight:700;margin-bottom:6px}.detailgrid strong{font-size:13px;overflow-wrap:anywhere}.stepgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0 20px}.step{background:#f7f9fb;border:1px solid var(--line);border-radius:11px;padding:11px;min-width:0}.step small{display:block;color:var(--sub);margin-bottom:9px}.actions{display:flex;flex-wrap:wrap;gap:9px;margin:17px 0}.rule{height:1px;background:var(--line);margin:20px 0}.historyrow{padding:10px 0;border-bottom:1px solid #edf1f4}.historyrow b{font-size:12px}.historyrow small{display:block;color:var(--sub);margin-top:4px}.dialogform{display:flex;flex-direction:column;gap:14px}.dialogform .btn{align-self:flex-end}.attachment{display:flex;gap:8px;align-items:center;border:1px solid var(--line);padding:10px 12px;border-radius:10px;margin:8px 0;font-size:12px;overflow-wrap:anywhere}.auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 80% 10%,#0e7f7755,transparent 33%),linear-gradient(145deg,#0e2237,#203a4d)}.auth-card{background:white;border-radius:22px;padding:32px;max-width:430px;width:100%;box-shadow:0 25px 80px #04182955}.auth-card .symbol{margin-bottom:15px}.auth-card h1{font-size:25px;letter-spacing:-.035em;margin:7px 0}.auth-card p{font-size:13px;color:var(--sub);line-height:1.6}.auth-card form{display:flex;flex-direction:column;gap:15px;margin:23px 0 0}.mobilebtn{display:none}.spin{display:inline-block;height:14px;width:14px;border:2px solid #c1ddd7;border-right-color:var(--teal);border-radius:50%;animation:rot .7s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}.toast{position:fixed;bottom:24px;right:24px;z-index:80;background:#172c3c;color:white;border-radius:12px;padding:13px 17px;max-width:360px;box-shadow:0 15px 40px #0718284d;font-size:12px;line-height:1.5}.toast{pointer-events:none}.toast.error{background:#a33447}.block{display:block}.mobilecover{display:none}
+    @media(max-width:1130px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:26px 22px 50px}.top{padding:0 22px}}
+    @media(max-width:770px){.aside{transform:translateX(-102%);transition:transform .2s;width:270px}.aside.open{transform:none}.mobilecover.show{display:block;position:fixed;inset:0;background:#0b2239aa;z-index:19}.appmain{margin-left:0;width:100%}.mobilebtn{display:inline-flex;border:0;border-radius:9px;padding:8px 10px;background:#e8f2f1;color:#125d56}.top{padding:0 15px;height:64px}.topname{font-size:12px}.topuser{gap:7px}.topuser .mini{display:none}.topuser .btn{min-height:36px;padding:7px 9px;font-size:11px}.wrap{padding:20px 14px 48px}.pageheading h1{font-size:26px}.pageheading{align-items:start;flex-wrap:wrap}.hero{padding:22px;display:block}.hero h2{font-size:21px}.hero .btn{margin-top:16px}.stats{gap:9px}.stat{padding:15px}.stat strong{font-size:21px}.phead{padding:16px}.pbody{padding:16px}.table-scroll{display:none}.listcards{display:block}.formgrid{grid-template-columns:1fr;gap:15px}.wide{grid-column:auto}.formfoot{align-items:stretch;flex-direction:column}.formfoot .btn{width:100%}.stepgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.dialog{max-height:92vh;border-radius:18px 18px 0 0}.overlay{padding:0;align-items:end}.dhead{padding:18px}.dbody{padding:17px}.detailgrid{gap:13px}.toolbar select{width:calc(50% - 5px)}.toolbar input{width:100%;flex-basis:100%}.auth-card{padding:25px}}
+    @media(max-width:350px){.stats{grid-template-columns:1fr 1fr}.pageheading h1{font-size:23px}.topname{max-width:115px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:9px;padding:5px 6px}.detailgrid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="root"><div class="auth-shell"><div class="auth-card"><div class="symbol">D</div><h1>DDC Prod Expenses Management</h1><p>Chargement de l'application…</p></div></div></div>
+<div id="toast" class="toast hide"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+'use strict';
+let token='',state=null,view='dashboard',selection=null,search='',filter='all',navOpen=false,busy=false,toastTimer;
+const SUPABASE_URL='https://nxesaslonnkxvoyrrrfj.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_m8-ByFHJArQSe9MThvLdnA_5y6dLuPX';
+const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+}) ?? null;
+const PHASE_TEST = 'Avances complémentaires activées pour tests, sans transfert bancaire. Utilisez des données fictives uniquement.';
 
-begin;
-
-create table if not exists public.complements_financement (
-  id uuid primary key default gen_random_uuid(),
-  demande_id text not null references public.demandes(id) on delete restrict,
-  montant_ariary bigint not null check (montant_ariary > 0 and montant_ariary <= 1000000000000),
-  motif text not null check (char_length(trim(motif)) between 10 and 500),
-  demande_par text not null references public.utilisateurs(id),
-  demande_le timestamptz not null default now(),
-  statut text not null default 'en_attente'
-    check (statut in ('en_attente','validee','refusee','decaissee')),
-  decide_par text references public.utilisateurs(id),
-  decide_le timestamptz,
-  commentaire_decision text check (commentaire_decision is null or char_length(commentaire_decision) <= 500),
-  decaisse_par text references public.utilisateurs(id),
-  decaisse_le timestamptz,
-  mode_paiement text check (mode_paiement is null or mode_paiement in ('Espèces','Virement','Mobile Money','Autre')),
-  reference_paiement text check (reference_paiement is null or char_length(reference_paiement) <= 120),
-  check (decide_par is null or decide_par <> demande_par),
-  check (statut = 'en_attente' or decide_par is not null),
-  check (statut <> 'decaissee' or (decaisse_par is not null and decaisse_le is not null and mode_paiement is not null))
-);
-
-create index if not exists idx_ddc_complements_demande
-  on public.complements_financement(demande_id, demande_le desc);
-
--- Une seule avance complementaire en attente/validee (non encore payee) par demande.
--- Refusee ou decaissee : on peut deposer une nouvelle demande complementaire.
-create unique index if not exists uq_ddc_complement_en_cours
-  on public.complements_financement(demande_id)
-  where statut in ('en_attente','validee');
-
-alter table public.complements_financement enable row level security;
-revoke all on public.complements_financement from public, anon, authenticated;
-grant select on public.complements_financement to authenticated;
--- Prepare une extension ulterieure du reporting via la fonction de service, sans exposer les donnees anonymement.
-grant select on public.complements_financement to service_role;
-
-drop policy if exists ddc_complements_read on public.complements_financement;
-create policy ddc_complements_read on public.complements_financement
-  for select to authenticated
-  using (
-    (select private.ddc_is_finance())
-    or exists (
-      select 1 from public.demandes d
-      where d.id = complements_financement.demande_id
-        and d.demandeur_id = (select private.ddc_my_id())
-    )
-  );
-
--- A. Demande : l'auteur proprietaire sollicite une rallonge (sans paiement automatique).
-create or replace function private.ddc_request_supplement(
-  p_request text, p_amount bigint, p_reason text
-)
-returns uuid
-language plpgsql volatile security definer set search_path = ''
-as $ddc$
-declare
-  v_actor text;
-  v_owner text;
-  v_paid bigint;
-  v_ref text := pg_catalog.btrim(coalesce(p_request, ''));
-  v_reason text := pg_catalog.btrim(coalesce(p_reason, ''));
-  v_result uuid;
-begin
-  if (select auth.uid()) is null then
-    raise exception 'Connexion requise.' using errcode = '28000';
-  end if;
-  select u.id into v_actor from public.utilisateurs u
-  where u.auth_id=(select auth.uid()) and u.actif=true;
-  if v_actor is null then
-    raise exception 'Compte DDC non autorise.' using errcode = '42501';
-  end if;
-  if p_amount is null or p_amount<=0 or p_amount>1000000000000 then
-    raise exception 'Montant complementaire invalide.';
-  end if;
-  if pg_catalog.char_length(v_reason)<10 or pg_catalog.char_length(v_reason)>500 then
-    raise exception 'Le motif doit compter entre 10 et 500 caracteres.';
-  end if;
-  -- Toutes les operations financieres verrouillent d'abord la demande.
-  select d.demandeur_id, d.montant_decaisse_ariary
-    into v_owner,v_paid
-  from public.demandes d
-  where d.id=v_ref and d.validation='validee' and d.decaissement='decaisse'
-    and d.controle<>'conforme'
-  for update;
-  if not found or v_owner<>v_actor then
-    raise exception 'Seul le demandeur peut demander une avance sur son dossier ouvert et decaisse.'
-      using errcode = '42501';
-  end if;
-  if v_paid is null or v_paid<=0 or p_amount>1000000000000-v_paid then
-    raise exception 'Le cumul du decaissement et du complement depasserait la limite.';
-  end if;
-  if exists(select 1 from public.complements_financement c
-    where c.demande_id=v_ref and c.statut in ('en_attente','validee')) then
-    raise exception 'Un complement est deja en attente de validation ou de decaissement.';
-  end if;
-  insert into public.complements_financement(demande_id,montant_ariary,motif,demande_par)
-  values(v_ref,p_amount,v_reason,v_actor) returning id into v_result;
-  insert into public.historique(demande_id,acteur_id,action,commentaire)
-  values(v_ref,v_actor,'complement_demande',
-    'Avance complementaire demandee : '||p_amount::text||' Ar · '||v_reason);
-  return v_result;
-end;
-$ddc$;
-
-create or replace function public.ddc_demander_complement(
-  p_demande text, p_montant bigint, p_motif text
-)
-returns uuid language sql volatile security invoker set search_path = ''
-as $ddc$
-  select private.ddc_request_supplement($1,$2,$3);
-$ddc$;
-
--- B. Validation ou refus : Roger ou Mamihasina, pas de validation personnelle.
-create or replace function private.ddc_decide_supplement(
-  p_supplement uuid, p_decision text, p_comment text
-)
-returns uuid
-language plpgsql volatile security definer set search_path = ''
-as $ddc$
-declare
-  v_actor text;
-  v_request text;
-  v_owner text;
-  v_status text;
-  v_amount bigint;
-  v_decision text := pg_catalog.btrim(coalesce(p_decision,''));
-  v_comment text := pg_catalog.btrim(coalesce(p_comment,''));
-begin
-  if (select auth.uid()) is null then
-    raise exception 'Connexion requise.' using errcode='28000';
-  end if;
-  select u.id into v_actor from public.utilisateurs u
-  where u.auth_id=(select auth.uid()) and u.actif=true and u.role in ('finance','daf');
-  if v_actor is null then
-    raise exception 'Validation reservee a Roger ou Mamihasina.' using errcode='42501';
-  end if;
-  if p_supplement is null or v_decision not in ('validee','refusee') then
-    raise exception 'Decision ou identifiant invalide.';
-  end if;
-  if pg_catalog.char_length(v_comment)>500 or (v_decision='refusee' and pg_catalog.char_length(v_comment)<5) then
-    raise exception 'Commentaire invalide (motif de refus : 5 caracteres minimum, 500 maximum).';
-  end if;
-  -- Verrou d'abord sur demande, puis complement pour eviter les courses.
-  select c.demande_id into v_request from public.complements_financement c
-  where c.id=p_supplement;
-  if v_request is null then
-    raise exception 'Avance complementaire introuvable.';
-  end if;
-  select d.demandeur_id into v_owner from public.demandes d
-  where d.id=v_request and d.validation='validee' and d.decaissement='decaisse'
-    and d.controle<>'conforme'
-  for update;
-  if not found or v_owner=v_actor then
-    raise exception 'Dossier ferme, invalide ou autovalidation interdite.' using errcode='42501';
-  end if;
-  select c.statut,c.montant_ariary into v_status,v_amount
-  from public.complements_financement c
-  where c.id=p_supplement and c.demande_id=v_request
-  for update;
-  if not found or v_status<>'en_attente' then
-    raise exception 'Cette demande complementaire a deja recu une decision.';
-  end if;
-  update public.complements_financement c
-  set statut=v_decision,decide_par=v_actor,decide_le=pg_catalog.now(),
-      commentaire_decision=nullif(v_comment,'')
-  where c.id=p_supplement;
-  insert into public.historique(demande_id,acteur_id,action,commentaire)
-  values(v_request,v_actor,
-    case when v_decision='validee' then 'complement_valide' else 'complement_refuse' end,
-    'Complement '||v_decision||' : '||v_amount::text||' Ar'||
-      case when v_comment<>'' then ' · '||v_comment else '' end);
-  return p_supplement;
-end;
-$ddc$;
-
-create or replace function public.ddc_decider_complement(
-  p_complement uuid, p_decision text, p_commentaire text
-)
-returns uuid language sql volatile security invoker set search_path = ''
-as $ddc$
-  select private.ddc_decide_supplement($1,$2,$3);
-$ddc$;
-
--- C. Decaissement : tout montant complementaire entre en solde seulement ici.
-create or replace function private.ddc_disburse_supplement(
-  p_supplement uuid, p_mode text, p_reference text
-)
-returns uuid
-language plpgsql volatile security definer set search_path = ''
-as $ddc$
-declare
-  v_actor text;
-  v_request text;
-  v_owner text;
-  v_status text;
-  v_amount bigint;
-  v_paid bigint;
-  v_control text;
-  v_proof text;
-  v_mode text := pg_catalog.btrim(coalesce(p_mode,''));
-  v_ref text := pg_catalog.btrim(coalesce(p_reference,''));
-begin
-  if (select auth.uid()) is null then
-    raise exception 'Connexion requise.' using errcode='28000';
-  end if;
-  select u.id into v_actor from public.utilisateurs u
-  where u.auth_id=(select auth.uid()) and u.actif=true and u.role in ('finance','daf');
-  if v_actor is null then
-    raise exception 'Decaissement reserve a Roger ou Mamihasina.' using errcode='42501';
-  end if;
-  if p_supplement is null or v_mode not in ('Espèces','Virement','Mobile Money','Autre') then
-    raise exception 'Reference ou mode de paiement invalide.';
-  end if;
-  if pg_catalog.char_length(v_ref)>120 then
-    raise exception 'Reference de paiement trop longue.';
-  end if;
-  select c.demande_id into v_request from public.complements_financement c
-  where c.id=p_supplement;
-  if v_request is null then
-    raise exception 'Avance complementaire introuvable.';
-  end if;
-  select d.demandeur_id,d.montant_decaisse_ariary,d.controle,d.justificatif
-    into v_owner,v_paid,v_control,v_proof
-  from public.demandes d
-  where d.id=v_request and d.validation='validee' and d.decaissement='decaisse'
-    and d.controle<>'conforme'
-  for update;
-  if not found or v_owner=v_actor then
-    raise exception 'Dossier ferme, invalide ou autodecaissement interdit.' using errcode='42501';
-  end if;
-  select c.statut,c.montant_ariary into v_status,v_amount
-  from public.complements_financement c
-  where c.id=p_supplement and c.demande_id=v_request
-  for update;
-  if not found or v_status<>'validee' then
-    raise exception 'L avance complementaire doit etre validee et non encore decaissee.';
-  end if;
-  if v_paid is null or v_paid<=0 or v_amount>1000000000000-v_paid then
-    raise exception 'Montant total decaisse excessif.';
-  end if;
-  update public.demandes d
-  set montant_decaisse_ariary=v_paid+v_amount,
-      controle=case when v_control='a_corriger' and v_proof='envoye' then 'a_verifier' else d.controle end,
-      controle_par=case when v_control='a_corriger' and v_proof='envoye' then null else d.controle_par end,
-      controle_le=case when v_control='a_corriger' and v_proof='envoye' then null else d.controle_le end,
-      commentaire_controle=case when v_control='a_corriger' and v_proof='envoye' then null else d.commentaire_controle end
-  where d.id=v_request;
-  update public.complements_financement c
-  set statut='decaissee',decaisse_par=v_actor,decaisse_le=pg_catalog.now(),
-      mode_paiement=v_mode,reference_paiement=nullif(v_ref,'')
-  where c.id=p_supplement;
-  insert into public.historique(demande_id,acteur_id,action,commentaire)
-  values(v_request,v_actor,'complement_decaisse',
-    'Avance complementaire payee : '||v_amount::text||' Ar · '||v_mode||
-      case when v_ref<>'' then ' · Ref. '||v_ref else '' end||
-      ' · Total decaisse : '||(v_paid+v_amount)::text||' Ar');
-  return p_supplement;
-end;
-$ddc$;
-
-create or replace function public.ddc_decaisser_complement(
-  p_complement uuid,p_mode_paiement text,p_reference text
-)
-returns uuid language sql volatile security invoker set search_path = ''
-as $ddc$
-  select private.ddc_disburse_supplement($1,$2,$3);
-$ddc$;
-
--- Blocage serveur de la cloture Conforme si une avance attend une decision ou un paiement.
--- Le controle existant de l'etape 11A reste intact et continue a calculer :
--- montants justifies + fonds restitues = total decaisse (y compris complement verse).
-create or replace function private.ddc_block_closure_with_pending_supplements()
-returns trigger
-language plpgsql volatile security definer set search_path = ''
-as $ddc$
-begin
-  if new.controle='conforme' and old.controle is distinct from new.controle
-    and exists(
-      select 1 from public.complements_financement c
-      where c.demande_id=new.id and c.statut in ('en_attente','validee')
-    ) then
-    raise exception 'Cloture impossible : une avance complementaire attend validation ou decaissement.';
-  end if;
-  return new;
-end;
-$ddc$;
-
-drop trigger if exists ddc_guard_pending_complements on public.demandes;
-create trigger ddc_guard_pending_complements
-before update of controle on public.demandes
-for each row execute function private.ddc_block_closure_with_pending_supplements();
-
--- Le navigateur ne peut pas creer/editer les complements directement.
-revoke insert,update,delete on public.complements_financement from public,anon,authenticated;
-
-revoke all on function private.ddc_request_supplement(text,bigint,text) from public,anon,authenticated;
-revoke all on function private.ddc_decide_supplement(uuid,text,text) from public,anon,authenticated;
-revoke all on function private.ddc_disburse_supplement(uuid,text,text) from public,anon,authenticated;
-revoke all on function private.ddc_block_closure_with_pending_supplements() from public,anon,authenticated;
-revoke all on function public.ddc_demander_complement(text,bigint,text) from public,anon,authenticated;
-revoke all on function public.ddc_decider_complement(uuid,text,text) from public,anon,authenticated;
-revoke all on function public.ddc_decaisser_complement(uuid,text,text) from public,anon,authenticated;
-
-grant execute on function private.ddc_request_supplement(text,bigint,text) to authenticated;
-grant execute on function private.ddc_decide_supplement(uuid,text,text) to authenticated;
-grant execute on function private.ddc_disburse_supplement(uuid,text,text) to authenticated;
-grant execute on function public.ddc_demander_complement(text,bigint,text) to authenticated;
-grant execute on function public.ddc_decider_complement(uuid,text,text) to authenticated;
-grant execute on function public.ddc_decaisser_complement(uuid,text,text) to authenticated;
-
-commit;
-
--- CONTROLES (6 lignes ; execution authentifiee true, anonyme false,
--- ecriture directe false). Ne valident pas la logique metier : tester aussi par profil.
-select n.nspname as schema,p.proname as fonction,
-  case when p.prosecdef then 'DEFINER' else 'INVOKER' end as execution,
-  has_function_privilege('authenticated',p.oid,'EXECUTE') as execute_authentifie,
-  has_function_privilege('anon',p.oid,'EXECUTE') as execute_anonyme,
-  has_table_privilege('authenticated','public.complements_financement','INSERT') as insertion_directe_possible
-from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
-where (n.nspname,p.proname) in (
-  ('private','ddc_request_supplement'),
-  ('private','ddc_decide_supplement'),
-  ('private','ddc_disburse_supplement'),
-  ('public','ddc_demander_complement'),
-  ('public','ddc_decider_complement'),
-  ('public','ddc_decaisser_complement')
-)
-order by schema,fonction;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ar=n=>(Number(n)||0).toLocaleString('fr-FR')+' Ar';
+const dateText=x=>{if(!x)return '—';const d=new Date(x);return isNaN(d.getTime())?'—':d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});};
+const statusConfig={en_cours:['En cours','pending'],validee:['Validée','ok'],refusee:['Refusée','no'],en_attente:['En attente','pending'],decaisse:['Décaissé','ok'],envoye:['Envoyé','info'],non_soumis:['À transmettre','pending'],a_verifier:['À vérifier','pending'],conforme:['Conforme','ok'],a_corriger:['À corriger','no']};
+const badge=v=>{const [t,c]=statusConfig[v]||[v||'—',''];return `<span class="badge ${c}">${esc(t)}</span>`;};
+const look=(rows,key,val,field)=>rows.find(x=>String(x[key])===String(val))?.[field]||'';
+const byId=id=>state.requests.find(r=>r.id===id);
+const catName=r=>`${r.categorie_code} · ${look(state.categories,'code',r.categorie_code,'libelle')}`;
+const accountName=r=>`${r.compte_code} · ${state.accounts.find(x=>String(x.code)===String(r.compte_code)&&String(x.categorie_code)===String(r.categorie_code))?.libelle||'—'}`;
+const person=id=>look(state.users,'id',id,'nom')||id||'—';
+const canReview=r=>['finance','daf'].includes(state.user.role)&&r.demandeur_id!==state.user.id;
+const mine=r=>r.demandeur_id===state.user.id;
+function toast(msg,error=false){const el=$('#toast');el.textContent=msg;el.className='toast'+(error?' error':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add('hide'),5000)}
+// Connexion directe Supabase : les requêtes utilisent les RLS en place.
+// Aucune clé secrète ni token de reporting n'est contenu dans ce site.
+function ensureClient(){
+  if(!supabaseClient) throw Error('Librairie Supabase indisponible. Vérifiez la connexion Internet ou le bloqueur de scripts.');
+  return supabaseClient;
+}
+function deniedWrite(){
+  throw Error('Action temporairement désactivée : les règles de création, validation et décaissement côté serveur ne sont pas encore installées.');
+}
+async function readAll(table, orderBy){
+  const c=ensureClient(), result=[], limit=500;
+  for(let offset=0;offset<10000;offset+=limit){
+    const {data,error}=await c.from(table).select('*').order(orderBy,{ascending:true}).range(offset,offset+limit-1);
+    if(error)throw Error('Lecture '+table+' : '+error.message);
+    result.push(...(data||[]));
+    if(!data||data.length<limit) return result;
+  }
+  throw Error('Limite d’affichage atteinte pour '+table+'.');
+}
+async function getAppData(){
+  const c=ensureClient();
+  const {data:{user},error:authError}=await c.auth.getUser();
+  if(authError||!user) throw Error('Connexion requise.');
+  const {data:profile,error:profileError}=await c.from('utilisateurs')
+    .select('id,auth_id,nom,email,role,actif').eq('auth_id',user.id).maybeSingle();
+  if(profileError)throw Error('Profil DDC : '+profileError.message);
+  if(!profile||profile.actif!==true)throw Error('Ce compte n’est pas lié à un profil DDC actif. Contactez la direction.');
+  const [users,categories,accounts,subaccounts,projects,requests,proofs,history,returns,supplements]=await Promise.all([
+    readAll('utilisateurs','id'),
+    readAll('categories','code'),
+    readAll('comptes','code'),
+    readAll('sous_comptes','id_interne'),
+    readAll('projets','id'),
+    readAll('demandes','cree_le'),
+    readAll('justificatifs','envoye_le'),
+    readAll('historique','date'),
+    readAll('restitutions','enregistre_le'),
+    readAll('complements_financement','demande_le')
+  ]);
+  const owners = profile.role==='daf'
+    ? categories.map(c=>String(c.code))
+    : categories.filter(c=>String(c.responsables_ids||'').split(',').map(x=>x.trim()).includes(profile.id)).map(c=>String(c.code));
+  return {user:profile,users,categories,accounts,subaccounts,projects,requests,proofs,history,returns,supplements,owners};
+}
+async function call(name,...params){
+  if(name==='getAppData') return getAppData();
+  if(name==='logout') {const {error}=await ensureClient().auth.signOut();if(error)throw Error(error.message);return {ok:true};}
+  if(name==='createRequest') {
+    const data=params[1];
+    if(!data)throw Error('Formulaire de demande incomplet.');
+    const {data:id,error}=await ensureClient().rpc('ddc_creer_demande',{
+      p_projet:data.project,
+      p_categorie:data.category,
+      p_compte:data.account,
+      p_sous_compte:data.sub||null,
+      p_libelle:String(data.label||'').trim(),
+      p_montant:Number(data.amount)
+    });
+    if(error)throw Error('Création de demande : '+error.message);
+    if(!id)throw Error('Aucune référence de demande retournée.');
+    return {id};
+  }
+  if(name==='addProject') {
+    const {data:id,error}=await ensureClient().rpc('ddc_creer_projet',{
+      p_nom:String(params[1]||'').trim()
+    });
+    if(error)throw Error('Création de projet : '+error.message);
+    return {id};
+  }
+  if(name==='decideRequest') {
+    const id=String(params[1]||'').trim();
+    const decision=String(params[2]||'').trim();
+    const comment=String(params[3]||'').trim();
+    const {data:ref,error}=await ensureClient().rpc('ddc_decider_demande',{
+      p_demande:id,
+      p_decision:decision,
+      p_commentaire:comment
+    });
+    if(error)throw Error('Décision financière : '+error.message);
+    if(!ref)throw Error('Aucune référence de demande retournée.');
+    toast(decision==='validee'?'Demande '+ref+' validée.':'Demande '+ref+' refusée.');
+    return {id:ref,decision};
+  }
+  if(name==='disburseRequest') {
+    const id=String(params[1]||'').trim();
+    const mode=String(params[2]||'').trim();
+    const {data:ref,error}=await ensureClient().rpc('ddc_decaisser_demande',{
+      p_demande:id,
+      p_mode_paiement:mode
+    });
+    if(error)throw Error('Décaissement : '+error.message);
+    if(!ref)throw Error('Aucune référence de demande retournée.');
+    toast('Décaissement intégral enregistré pour '+ref+'.');
+    return {id:ref};
+  }
+  if(name==='uploadProof') {
+    const id=String(params[1]||'').trim();
+    const payload=params[2]||{};
+    const file=payload.file;
+    if(!(file instanceof File)) throw Error('Choisissez un fichier PDF ou une image.');
+    if(!file.size || file.size>10*1024*1024) throw Error('Fichier vide ou supérieur à 10 Mo.');
+    const ext=String(file.name.split('.').pop()||'').toLowerCase();
+    const allowed={pdf:'application/pdf',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp'};
+    if(!allowed[ext]||allowed[ext]!==file.type) throw Error('Seuls les fichiers PDF, JPG, PNG et WEBP sont acceptés.');
+    if(file.name.length>200) throw Error('Nom de fichier trop long (200 caractères maximum).');
+    if(!/^[-_A-Za-z0-9]+$/.test(id)) throw Error('Référence de demande incorrecte.');
+    if(!crypto?.randomUUID) throw Error('Navigateur non compatible avec la création de références de fichiers.');
+    const path=id+'/'+crypto.randomUUID()+'.'+ext;
+    const db=ensureClient();
+    const {error:uploadError}=await db.storage.from('ddc-justificatifs')
+      .upload(path,file,{upsert:false,contentType:file.type,cacheControl:'0'});
+    if(uploadError) throw Error('Envoi du fichier : '+uploadError.message);
+    const {data:receiptId,error:registerError}=await db.rpc('ddc_enregistrer_justificatif',{
+      p_demande:id,
+      p_chemin:path,
+      p_nom_fichier:file.name,
+      p_mime_type:file.type,
+      p_taille_octets:file.size,
+      p_commentaire:String(payload.comment||'').trim()||null
+    });
+    if(registerError) throw Error('Fichier transmis, mais enregistrement du justificatif impossible : '+registerError.message+'. Signalez cette erreur à la direction.');
+    toast('Justificatif enregistré.');
+    return {id:receiptId};
+  }
+  if(name==='reviewProof') {
+    const id=String(params[1]||'').trim();
+    const decision=String(params[2]||'').trim();
+    const amounts=params[3];
+    const comment=String(params[4]||'').trim();
+    const {data:ref,error}=await ensureClient().rpc('ddc_controler_justificatifs',{
+      p_demande:id,
+      p_decision:decision,
+      p_montants:amounts,
+      p_commentaire:comment
+    });
+    if(error)throw Error('Contrôle financier : '+error.message);
+    if(!ref)throw Error('Aucune référence de demande retournée.');
+    toast(decision==='conforme'?'Justificatifs conformes pour '+ref+'.':'Correction demandée pour '+ref+'.');
+    return {id:ref,decision};
+  }
+  if(name==='returnFunds') {
+    const id=String(params[1]||'').trim();
+    const amount=Number(params[2]);
+    const mode=String(params[3]||'').trim();
+    const reference=String(params[4]||'').trim();
+    const comment=String(params[5]||'').trim();
+    if(!Number.isSafeInteger(amount)||amount<=0) throw Error('Montant de restitution invalide.');
+    const {data:ref,error}=await ensureClient().rpc('ddc_enregistrer_restitution',{
+      p_demande:id,p_montant:amount,p_mode:mode,p_reference:reference,p_commentaire:comment
+    });
+    if(error)throw Error('Restitution : '+error.message);
+    if(!ref)throw Error('Référence de restitution non retournée.');
+    toast('Retour de fonds enregistré pour '+id+'.');
+    return {id:ref};
+  }
+  if(name==='requestSupplement') {
+    const id=String(params[1]||'').trim(), amount=Number(params[2]), reason=String(params[3]||'').trim();
+    if(!Number.isSafeInteger(amount)||amount<=0||amount>1000000000000)throw Error('Montant complémentaire invalide.');
+    if(reason.length<10||reason.length>500)throw Error('Motif obligatoire : entre 10 et 500 caractères.');
+    const {data:ref,error}=await ensureClient().rpc('ddc_demander_complement',{
+      p_demande:id,p_montant:amount,p_motif:reason
+    });
+    if(error)throw Error('Demande complémentaire : '+error.message);
+    if(!ref)throw Error('La référence du complément est manquante.');
+    toast('Demande d’avance complémentaire envoyée pour validation.');
+    return {id:ref};
+  }
+  if(name==='decideSupplement') {
+    const ref=String(params[1]||'').trim(), decision=String(params[2]||'').trim(), note=String(params[3]||'').trim();
+    const {data:id,error}=await ensureClient().rpc('ddc_decider_complement',{
+      p_complement:ref,p_decision:decision,p_commentaire:note
+    });
+    if(error)throw Error('Décision sur complément : '+error.message);
+    if(!id)throw Error('La référence du complément est manquante.');
+    toast(decision==='validee'?'Avance complémentaire validée, pas encore décaissée.':'Avance complémentaire refusée.');
+    return {id};
+  }
+  if(name==='disburseSupplement') {
+    const ref=String(params[1]||'').trim(),mode=String(params[2]||'').trim(),reference=String(params[3]||'').trim();
+    const {data:id,error}=await ensureClient().rpc('ddc_decaisser_complement',{
+      p_complement:ref,p_mode_paiement:mode,p_reference:reference
+    });
+    if(error)throw Error('Décaissement complémentaire : '+error.message);
+    if(!id)throw Error('La référence du complément est manquante.');
+    toast('Décaissement complémentaire enregistré.');
+    return {id};
+  }
+  if(name==='downloadProof') {
+    const proofId=String(params[1]||'');
+    const proof=state.proofs.find(p=>p.id===proofId);
+    if(!proof) throw Error('Justificatif introuvable ou non autorisé.');
+    const {data:blob,error}=await ensureClient().storage.from('ddc-justificatifs').download(proof.stockage_chemin);
+    if(error) throw Error('Téléchargement : '+error.message);
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');
+    link.href=url;
+    link.download=proof.nom_fichier||'justificatif';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    return {ok:true};
+  }
+  return deniedWrite();
+}
+function busyButton(on){busy=on;document.querySelectorAll('button[data-submit]').forEach(b=>{b.disabled=on;b.dataset.original=b.dataset.original||b.innerHTML;b.innerHTML=on?'<span class="spin"></span> En cours…':b.dataset.original})}
+async function runAction(fn){if(busy)return;try{busyButton(true);await fn()}catch(e){toast(e.message||'Une erreur est survenue.',true);if(/Session expirée|Accès non autorisé|Connexion requise|Session invalide|Utilisateur non autorisé/i.test(e.message||'')){clearSession();showLogin()}}finally{busyButton(false)}}
+function clearSession(){token='';state=null;}
+function showLogin(message=''){
+  $('#root').innerHTML=`<div class="auth-shell"><div class="auth-card"><div class="symbol">D</div><div class="caps">Accès privé · Production DDC</div><h1>DDC Prod Expenses Management</h1><p>Connectez-vous avec votre adresse e-mail DDC autorisée et le mot de passe créé dans Supabase.</p>${message?`<div class="notice warn" role="alert">${esc(message)}</div>`:''}<form id="loginForm"><div class="field"><label for="loginEmail">Adresse e-mail</label><input class="control" id="loginEmail" type="email" autocomplete="username" required placeholder="votre-adresse@email.com"></div><div class="field"><label for="loginPassword">Mot de passe</label><input class="control" id="loginPassword" type="password" autocomplete="current-password" required></div><button class="btn primary full" type="submit" data-submit>Se connecter</button></form><p class="tiny" style="margin-top:22px">Accès réservé aux cinq collaborateurs autorisés. Connexion protégée par Supabase Auth et les politiques RLS.</p></div></div>`;
+  $('#loginForm').onsubmit=e=>{e.preventDefault();runAction(async()=>{
+    const email=$('#loginEmail').value.trim(),password=$('#loginPassword').value;
+    const {error}=await ensureClient().auth.signInWithPassword({email,password});
+    if(error){
+      const code=String(error.code||'').toLowerCase();
+      const detail=String(error.message||'Erreur inconnue');
+      if(code==='invalid_credentials'||/invalid login credentials/i.test(detail)){
+        throw Error('Supabase : identifiants non reconnus. Vérifiez le mot de passe et l’adresse e-mail du compte créé dans Authentication > Users.');
+      }
+      if(code==='email_not_confirmed'||/email not confirmed/i.test(detail)){
+        throw Error('Supabase : adresse e-mail non confirmée. Vérifiez la fiche du compte dans Authentication > Users.');
+      }
+      throw Error('Connexion Supabase : '+detail+(code?' ('+code+')':''));
+    }
+    await load();
+  })};
+}
+async function load(){
+  try{state=await call('getAppData');render()}
+  catch(e){clearSession();showLogin(e.message&& !/Connexion requise/i.test(e.message)?e.message:'')}
+}
+function render(){if(!state){showLogin();return}const isFin=['finance','daf'].includes(state.user.role);const nav=[['dashboard','◫','Tableau de bord'],['requests','☷','Demandes'],['new','＋','Nouvelle demande']];const items=nav.map(([id,ico,label])=>`<button class="navbtn ${view===id?'active':''}" data-nav="${id}"><span class="ico">${ico}</span>${label}</button>`).join('');
+  $('#root').innerHTML=`<div class="layout"><div id="mobileCover" class="mobilecover ${navOpen?'show':''}" data-closemenu></div><aside id="aside" class="aside ${navOpen?'open':''}"><div class="logo"><span class="symbol">D</span><div><strong>DDC <span style="color:#67d5c2">PROD</span></strong><span>EXPENSES MANAGEMENT</span></div></div><small class="menu-label">Navigation</small>${items}<div class="sidebar-foot"><b style="color:#fff">${isFin?'Validation & contrôle':'Mes catégories autorisées'}</b><br>${isFin?'Suivi financier, justificatifs et historique des opérations.':state.owners.map(id=>`${id} · ${look(state.categories,'code',id,'libelle')}`).join(' / ')||'Aucune catégorie attribuée'}</div></aside><div class="appmain"><header class="top"><div style="display:flex;align-items:center;gap:11px"><button class="mobilebtn" data-menu aria-label="Ouvrir la navigation">☰</button><span class="topname">DDC Prod Expenses Management</span></div><div class="topuser"><span class="mini muted">${esc(state.user.role==='daf'?'DAF':state.user.role==='finance'?'Responsable financier':'Responsable de département')}</span><span class="avatar">${esc(state.user.nom.slice(0,1).toUpperCase())}</span><button class="btn small" data-logout>Déconnexion</button></div></header><main class="wrap"><div class="notice warn" role="status" style="margin-bottom:18px"><b>Workflow financier V5 activé.</b> Contrôle des justificatifs, retours de fonds et avances complémentaires disponibles. Utilisez des données fictives pendant les tests.</div>${view==='new'?newPage():view==='requests'?requestsPage():dashboardPage()}</main></div></div>`;
+  document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{view=b.dataset.nav;navOpen=false;render()});
+  $('[data-menu]')?.addEventListener('click',()=>{navOpen=!navOpen;render()});
+  $('[data-closemenu]')?.addEventListener('click',()=>{navOpen=false;render()});
+  $('[data-logout]').onclick=()=>runAction(async()=>{await call('logout',token);clearSession();showLogin();toast('Vous êtes déconnecté.')});
+  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{view=b.dataset.go;render()});
+  document.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',()=>openDetail(el.dataset.open)));
+  if(view==='new')wireNew();if(view==='requests')wireSearch();
+  $('[data-addproject]')?.addEventListener('click',()=>createProjectPrompt());
+}
+function heading(k,title,desc,extra=''){return `<section class="pageheading"><div><div class="caps">${esc(k)}</div><h1>${esc(title)}</h1><p>${esc(desc)}</p></div>${extra}</section>`}
+function stats(){const r=state.requests;const amount=r.filter(x=>x.validation==='validee').reduce((s,x)=>s+Number(x.montant_ariary||0),0)+(state.supplements||[]).filter(x=>['validee','decaissee'].includes(x.statut)).reduce((s,x)=>s+Number(x.montant_ariary||0),0);return [{label:'Demandes',value:r.length,desc:'Dossiers visibles'},{label:'En attente de validation',value:r.filter(x=>x.validation==='en_cours').length,desc:'À traiter'},{label:'Total validé',value:ar(amount),desc:'Initial + compléments approuvés'},{label:'Justificatifs à vérifier',value:r.filter(x=>x.controle==='a_verifier').length,desc:'Contrôle restant'}].map(c=>`<article class="stat"><label>${esc(c.label)}</label><strong style="font-size:${String(c.value).length>12?'19':'26'}px">${esc(c.value)}</strong><small>${esc(c.desc)}</small></article>`).join('')}
+function dashboardPage(){const isFin=['finance','daf'].includes(state.user.role);const latest=[...state.requests].sort((a,b)=>String(b.cree_le).localeCompare(String(a.cree_le))).slice(0,7);return `<section class="hero"><div><div class="caps bright">Espace ${isFin?'financier':'production'}</div><h2>Bonjour ${esc(state.user.nom)}.</h2><p>${isFin?'Validez les dépenses, suivez les décaissements et contrôlez les justificatifs dans un seul espace.':'Déposez vos demandes par compte budgétaire et suivez chaque étape jusqu’au contrôle final.'}</p></div><button class="btn" data-go="new">＋ Nouvelle demande</button></section><section class="stats">${stats()}</section><section class="panel"><div class="phead"><div><h2>Demandes récentes</h2><div class="mini muted">Votre suivi sécurisé depuis Supabase</div></div><button class="btn small" data-go="requests">Tout afficher</button></div>${requestTables(latest)}</section>${state.user.role==='daf'?`<div style="margin-top:18px" class="notice">Vous pouvez ajouter un tournage à tout moment : <button class="btn small soft" data-addproject>＋ Ajouter un projet</button></div>`:''}`}
+function requestTables(data){if(!data.length)return '<div class="empty"><strong>Aucune demande pour le moment</strong><p>Les nouvelles demandes enregistrées dans Supabase apparaîtront ici.</p></div>';const header='<thead><tr><th>Référence / demande</th><th>Demandeur</th><th>Compte</th><th>Montant initial</th><th>Validation</th><th>Décaissement</th><th>Justificatif</th></tr></thead>';const body=data.map(r=>`<tr data-id="${esc(r.id)}" data-open="${esc(r.id)}"><td><b>${esc(r.id)}</b><div class="muted tiny">${esc(r.libelle)}</div></td><td>${esc(person(r.demandeur_id))}</td><td>${esc(r.compte_code)}</td><td><b>${esc(ar(r.montant_ariary))}</b></td><td>${badge(r.validation)}</td><td>${badge(r.decaissement)}</td><td>${badge(r.justificatif)}</td></tr>`).join('');const mobile=data.map(r=>`<article class="req-card" data-open="${esc(r.id)}"><div class="line"><div><b>${esc(r.id)}</b><div class="tiny muted">${esc(person(r.demandeur_id))} · ${esc(r.compte_code)}</div></div><b>${esc(ar(r.montant_ariary))}</b></div><p>${esc(r.libelle)}</p><div class="foot">${badge(r.validation)}${badge(r.decaissement)}${badge(r.justificatif)}</div></article>`).join('');return `<div class="table-scroll"><table>${header}<tbody>${body}</tbody></table></div><div class="listcards" style="padding:12px">${mobile}</div>`}
+function requestsPage(){let data=[...state.requests].sort((a,b)=>String(b.cree_le).localeCompare(String(a.cree_le)));if(search){const q=search.toLowerCase();data=data.filter(r=>[r.id,r.libelle,person(r.demandeur_id),r.compte_code,catName(r)].join(' ').toLowerCase().includes(q))}if(filter!=='all')data=data.filter(r=>r.validation===filter||r.decaissement===filter||r.controle===filter);return `${heading('Traçabilité','Toutes les demandes','Consultez les décisions, décaissements et justificatifs.',`<button class="btn primary" data-go="new">＋ Nouvelle demande</button>`)}<div class="toolbar"><input id="searchReq" class="control" placeholder="Rechercher un numéro, un compte, un libellé…" value="${esc(search)}"><select class="control" id="filterReq"><option value="all">Tous les statuts</option><option value="en_cours" ${filter==='en_cours'?'selected':''}>Validation en cours</option><option value="validee" ${filter==='validee'?'selected':''}>Validées</option><option value="refusee" ${filter==='refusee'?'selected':''}>Refusées</option><option value="decaisse" ${filter==='decaisse'?'selected':''}>Décaissées</option><option value="a_verifier" ${filter==='a_verifier'?'selected':''}>Justificatifs à vérifier</option></select></div><div class="panel">${requestTables(data)}</div>`}
+function wireSearch(){const q=$('#searchReq');q?.addEventListener('input',e=>{search=e.target.value;const pos=e.target.selectionStart;render();$('#searchReq')?.focus();$('#searchReq')?.setSelectionRange(pos,pos)});$('#filterReq')?.addEventListener('change',e=>{filter=e.target.value;render()})}
+function newPage(){const allowed=state.categories.filter(c=>state.owners.includes(c.code));if(!allowed.length)return heading('Nouvelle dépense','Accès non attribué','Demandez à Mamihasina de vous attribuer une catégorie dans la configuration DDC.');return `${heading('Saisie','Nouvelle demande','Catégorie → compte → sous-compte (si nécessaire) → libellé → montant.') }<section class="panel" style="max-width:810px"><div class="phead"><div><h2>Informations de dépense</h2><div class="mini muted">Demandeur : ${esc(state.user.nom)}</div></div></div><form id="newForm" class="pbody"><div class="formgrid"><div class="field"><label>Projet de production *</label><select required class="control" id="project"><option value="">Choisir un projet</option>${state.projects.filter(p=>p.actif).map(p=>`<option value="${esc(p.id)}">${esc(p.nom)}</option>`).join('')}</select></div><div class="field"><label>Catégorie de dépense *</label><select required class="control" id="category"><option value="">Choisir une catégorie</option>${allowed.map(c=>`<option value="${esc(c.code)}">${esc(c.code+' · '+c.libelle)}</option>`).join('')}</select></div><div class="field"><label>Compte concerné *</label><select required class="control" id="account" disabled><option value="">Choisir d’abord la catégorie</option></select></div><div class="field" id="subField" style="display:none"><label>Sous-compte *</label><select class="control" id="sub"></select><span class="mini muted">Les codes 612 et 622 conservent leurs libellés distincts.</span></div><div class="field wide"><label>Libellé — motif de la dépense *</label><textarea class="control" id="label" placeholder="Exemple : location véhicule pour le déplacement de l'équipe du tournage" maxlength="400" required></textarea></div><div class="field"><label>Montant demandé en Ariary *</label><input class="control" id="amount" type="number" min="1" step="1" max="1000000000000" placeholder="350000" required></div><div class="field"><label>Récapitulatif</label><div style="padding:12px;border-radius:12px;background:#f3f8f7"><span class="mini muted">Montant de la demande</span><div class="price" id="amountPreview">0 Ar</div></div></div></div><div class="formfoot"><span class="mini muted">La demande sera soumise à Roger ou Mamihasina pour validation.</span><button class="btn primary" data-submit type="submit">Soumettre la demande</button></div></form></section>`}
+function wireNew(){const c=$('#category'),a=$('#account'),s=$('#sub');if(!c)return;c.onchange=()=>{const accounts=state.accounts.filter(x=>String(x.categorie_code)===c.value);a.disabled=!c.value;a.innerHTML='<option value="">Choisir un compte</option>'+accounts.map(x=>`<option value="${esc(x.code)}">${esc(x.code+' · '+x.libelle)}</option>`).join('');s.innerHTML='';$('#subField').style.display='none'};a.onchange=()=>{const subs=state.subaccounts.filter(x=>String(x.categorie_code)===c.value&&String(x.compte_code)===a.value);$('#subField').style.display=subs.length?'flex':'none';s.required=!!subs.length;s.innerHTML='<option value="">Choisir un sous-compte</option>'+subs.map(x=>`<option value="${esc(x.id_interne)}">${esc(x.code_affiche+' · '+x.libelle)}</option>`).join('')};$('#amount').oninput=e=>$('#amountPreview').textContent=ar(e.target.value);$('#newForm').onsubmit=e=>{e.preventDefault();runAction(async()=>{const data={project:$('#project').value,category:c.value,account:a.value,sub:$('#subField').style.display==='none'?'':s.value,label:$('#label').value,amount:$('#amount').value};const result=await call('createRequest',token,data);toast('Demande '+result.id+' enregistrée.');view='requests';await load()})}}
+function closeDialog(){selection=null;document.querySelector('#dialogLayer')?.remove()}
+function openDetail(id){const r=byId(id);if(!r)return;selection=id;const sub=state.subaccounts.find(x=>x.id_interne===r.sous_compte_id);const proofs=state.proofs.filter(p=>p.demande_id===id);const returns=(state.returns||[]).filter(x=>x.demande_id===id);const supplements=(state.supplements||[]).filter(x=>x.demande_id===id);const supplementOpen=supplements.find(x=>['en_attente','validee'].includes(x.statut));const supplementApproved=supplements.filter(x=>['validee','decaissee'].includes(x.statut)).reduce((n,x)=>n+Number(x.montant_ariary||0),0);const returned=returns.reduce((sum,x)=>sum+Number(x.montant_ariary||0),0);const history=state.history.filter(h=>h.demande_id===id).sort((a,b)=>String(b.date).localeCompare(String(a.date)));const buttons=[];
+  if(canReview(r)&&r.validation==='en_cours'){buttons.push('<button class="btn primary" data-action="approve">✓ Valider</button>','<button class="btn danger" data-action="reject">Refuser</button>')}
+  if(canReview(r)&&r.validation==='validee'&&r.decaissement==='en_attente'){buttons.push('<button class="btn primary" data-action="pay">Enregistrer le décaissement</button>')}
+  if(canReview(r)&&r.decaissement==='decaisse'&&r.controle!=='conforme'&&returned<Number(r.montant_decaisse_ariary||0)){buttons.push('<button class="btn soft" data-action="return">Enregistrer un retour de fonds</button>')}
+  if(mine(r)&&r.decaissement==='decaisse'&&r.controle!=='conforme'&&!supplementOpen){buttons.push('<button class="btn soft" data-action="requestSupplement">＋ Demander une avance complémentaire</button>')}
+  if(mine(r)&&r.decaissement==='decaisse'&&r.controle!=='conforme'){buttons.push('<button class="btn primary" data-action="proof">+ Ajouter un justificatif</button>')}
+  if(canReview(r)&&r.decaissement==='decaisse'&&r.justificatif==='envoye'&&r.controle==='a_verifier'&&proofs.length){
+    buttons.push('<button class="btn primary" data-action="compliant">✓ Marquer conforme</button>','<button class="btn danger" data-action="correction">Demander une correction</button>');
+  }
+  const detail=`<div class="overlay" id="dialogLayer" role="presentation"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="dhead"><div><div class="caps">Dossier de dépense</div><h2 id="detailTitle">${esc(r.id)}</h2></div><button class="close" data-close aria-label="Fermer">×</button></div><div class="dbody"><div style="display:flex;align-items:start;justify-content:space-between;gap:15px"><div><b style="font-size:16px">${esc(r.libelle)}</b><div class="mini muted">${esc(person(r.demandeur_id))} · ${dateText(r.cree_le)}</div></div><div class="price">${esc(ar(r.montant_ariary))}</div></div><div class="detailgrid"><div><div class="lab">Projet</div><strong>${esc(look(state.projects,'id',r.projet_id,'nom'))}</strong></div><div><div class="lab">Catégorie</div><strong>${esc(catName(r))}</strong></div><div><div class="lab">Compte</div><strong>${esc(accountName(r))}</strong></div><div><div class="lab">Sous-compte</div><strong>${esc(sub?sub.code_affiche+' · '+sub.libelle:'—')}</strong></div></div><div class="stepgrid"><div class="step"><small>Validation</small>${badge(r.validation)}</div><div class="step"><small>Décaissement</small>${badge(r.decaissement)}</div><div class="step"><small>Justificatif</small>${badge(r.justificatif)}</div><div class="step"><small>Contrôle</small>${badge(r.controle)}</div></div>${r.decaissement==='decaisse'?`<div class="notice"><b>Décaissement initial :</b> ${esc(ar(r.montant_ariary))} · ${esc(r.mode_paiement||'Mode non renseigné')} · ${dateText(r.decaisse_le)}</div>`:''}${r.decaissement==='decaisse'?`<div class="notice" style="margin-top:8px"><b>Budget initial approuvé :</b> ${esc(ar(r.montant_ariary))} · <b>Compléments approuvés :</b> ${esc(ar(supplementApproved))} · <b>Budget total approuvé :</b> ${esc(ar(Number(r.montant_ariary||0)+supplementApproved))} · <b>Total effectivement décaissé :</b> ${esc(ar(r.montant_decaisse_ariary))}</div>`:''}${r.decaissement==='decaisse'?`<div class="notice" style="margin-top:8px"><b>Fonds restitués :</b> ${esc(ar(returned))} · <b>Reste à justifier ou restituer :</b> ${esc(ar(Number(r.montant_decaisse_ariary||0)-Number(r.montant_justifie_ariary||0)-returned))}</div>`:''}${returns.length?`<div class="mini muted" style="margin-top:8px">${returns.map(x=>`Retour du ${dateText(x.enregistre_le)} : ${esc(ar(x.montant_ariary))} · ${esc(x.mode_restitution)}`).join(' / ')}</div>`:''}${r.montant_justifie_ariary!==null && r.montant_justifie_ariary!==undefined?`<div class="notice" style="margin-top:8px"><b>Montant justifié vérifié :</b> ${esc(ar(r.montant_justifie_ariary))} · <b>Solde après retours :</b> ${esc(ar(Number(r.montant_decaisse_ariary||0)-Number(r.montant_justifie_ariary||0)-returned))}</div>`:''}${r.motif_decision?`<div class="notice warn"><b>Décision :</b> ${esc(r.motif_decision)}</div>`:''}${r.commentaire_controle?`<div class="notice warn" style="margin-top:8px"><b>Contrôle :</b> ${esc(r.commentaire_controle)}</div>`:''}<div class="actions">${buttons.join('')}<span class="mini muted">${esc(PHASE_TEST)}</span></div><div class="rule"></div><h3 style="font-size:14px">Avances complémentaires (${supplements.length})</h3>${supplements.length?supplements.map(c=>`<div class="attachment" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><b>${esc(ar(c.montant_ariary))}</b>${badgeSupplement(c.statut)}</div><div class="mini muted" style="margin-top:6px">Demandé le ${dateText(c.demande_le)} par ${esc(person(c.demande_par))} · ${esc(c.motif)}</div>${c.commentaire_decision?`<div class="mini muted" style="margin-top:5px">Décision : ${esc(c.commentaire_decision)}</div>`:''}${c.statut==='decaissee'?`<div class="mini muted" style="margin-top:5px">Décaissement : ${dateText(c.decaisse_le)} · ${esc(c.mode_paiement||'—')}${c.reference_paiement?' · Réf. '+esc(c.reference_paiement):''}</div>`:''}${canReview(r)&&r.controle!=='conforme'&&c.statut==='en_attente'?`<div class="actions"><button class="btn primary small" data-supplement-action="approve" data-supplement-id="${esc(c.id)}">✓ Valider le complément</button><button class="btn danger small" data-supplement-action="reject" data-supplement-id="${esc(c.id)}">Refuser</button></div>`:''}${canReview(r)&&r.controle!=='conforme'&&c.statut==='validee'?`<div class="actions"><button class="btn primary small" data-supplement-action="pay" data-supplement-id="${esc(c.id)}">Enregistrer le décaissement complémentaire</button></div>`:''}</div>`).join(''):'<p class="mini muted">Aucune avance complémentaire demandée.</p>'}<div class="rule"></div><h3 style="font-size:14px">Justificatifs (${proofs.length})</h3>${proofs.length?proofs.map(p=>`<button type="button" class="attachment" data-proof="${esc(p.id)}" style="width:100%;text-align:left;cursor:pointer" title="Télécharger le justificatif">📎 <span>${esc(p.nom_fichier)}</span><span class="tiny muted"> · ${dateText(p.envoye_le)}</span>${p.montant_justifie_ariary!==null&&p.montant_justifie_ariary!==undefined?` <span class="tiny muted"> · Montant vérifié : ${esc(ar(p.montant_justifie_ariary))}</span>`:''} <span class="mini muted">↓ Télécharger</span></button>`).join(''):'<p class="mini muted">Aucun justificatif transmis.</p>'}<div class="rule"></div><h3 style="font-size:14px">Historique des opérations</h3>${history.map(h=>`<div class="historyrow"><b>${esc(h.action.replaceAll('_',' '))}</b> · <span class="mini muted">${esc(person(h.acteur_id))}</span><small>${dateText(h.date)}${h.commentaire?' · '+esc(h.commentaire):''}</small></div>`).join('')||'<p class="mini muted">Aucune opération.</p>'}</div></div></div>`;
+  document.body.insertAdjacentHTML('beforeend',detail);
+  $('[data-close]').onclick=closeDialog;
+  $('#dialogLayer').addEventListener('click',e=>{if(e.target.id==='dialogLayer')closeDialog()});
+  document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>startAction(b.dataset.action,r)));
+  document.querySelectorAll('[data-supplement-action]').forEach(b=>b.addEventListener('click',()=>startSupplementAction(b.dataset.supplementAction,b.dataset.supplementId,r)));
+  document.querySelectorAll('[data-proof]').forEach(b=>b.addEventListener('click',()=>runAction(()=>call('downloadProof',token,b.dataset.proof))));
+}
+function badgeSupplement(status){const config={en_attente:['En attente','pending'],validee:['Validée · non décaissée','info'],refusee:['Refusée','no'],decaissee:['Décaissée','ok']};const [name,kind]=config[status]||[status,''];return `<span class="badge ${kind}">${esc(name)}</span>`}
+function safeHttpUrl(url){try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)?u.href:'#'}catch(e){return '#'}}
+function actionModal(title,inner,submitText,handler){const dialog=$('#dialogLayer .dialog');dialog.innerHTML=`<div class="dhead"><div><div class="caps">${esc(selection)}</div><h2>${esc(title)}</h2></div><button class="close" data-close aria-label="Fermer">×</button></div><div class="dbody"><form id="actionForm" class="dialogform">${inner}<button class="btn primary" data-submit type="submit">${esc(submitText)}</button></form></div>`;dialog.querySelector('[data-close]').onclick=closeDialog;$('#actionForm').onsubmit=e=>{e.preventDefault();runAction(async()=>{await handler();closeDialog();await load()})}}
+function startAction(type,r){const id=r.id;if(type==='approve')return actionModal('Valider cette dépense','<p class="mini muted">Une seule approbation suffit. Cette action ne déclenche pas le décaissement.</p><div class="field"><label>Commentaire (facultatif)</label><textarea class="control" id="note"></textarea></div>','Valider',()=>call('decideRequest',token,id,'validee',$('#note').value));if(type==='reject')return actionModal('Refuser cette demande','<div class="field"><label>Motif du refus *</label><textarea class="control" id="note" required></textarea></div>','Confirmer le refus',()=>call('decideRequest',token,id,'refusee',$('#note').value));if(type==='pay')return actionModal('Enregistrer le décaissement',`<div class="notice">Montant validé : <b>${esc(ar(r.montant_ariary))}</b>. Le suivi de cette version concerne le paiement intégral de la demande.</div><div class="field"><label>Mode de paiement</label><select class="control" id="payMode"><option>Espèces</option><option>Virement</option><option>Mobile Money</option><option>Autre</option></select></div>`,'Confirmer le décaissement',()=>call('disburseRequest',token,id,$('#payMode').value));if(type==='return'){
+  const totalReturned=(state.returns||[]).filter(x=>x.demande_id===id).reduce((sum,x)=>sum+Number(x.montant_ariary||0),0);
+  const left=Number(r.montant_decaisse_ariary||0)-totalReturned;
+  const inner=`<div class="notice"><b>Retour de fonds à DDC :</b> enregistrez uniquement une somme effectivement récupérée. Montant encore non restitué : ${esc(ar(left))}. Cette opération ne déclenche pas de transfert réel.</div><div class="field"><label>Montant restitué (Ar) *</label><input class="control" id="refundAmount" inputmode="numeric" type="number" min="1" max="${left}" step="1" required></div><div class="field"><label>Mode de restitution</label><select class="control" id="refundMode"><option>Espèces</option><option>Virement</option><option>Mobile Money</option><option>Autre</option></select></div><div class="field"><label>Référence du reçu (facultatif)</label><input class="control" id="refundRef" maxlength="120" placeholder="Référence de remise / virement"></div><div class="field"><label>Commentaire (facultatif)</label><textarea class="control" id="refundNote" maxlength="500"></textarea></div>`;
+  return actionModal('Enregistrer un retour de fonds',inner,'Confirmer la réception',()=>{
+    const amount=Number($('#refundAmount').value);
+    if(!Number.isSafeInteger(amount)||amount<=0||amount>left)throw Error('Montant de restitution incorrect.');
+    return call('returnFunds',token,id,amount,$('#refundMode').value,$('#refundRef').value,$('#refundNote').value);
+  });
+}if(type==='requestSupplement'){
+  const available=1000000000000-Number(r.montant_decaisse_ariary||0);
+  const inner=`<div class="notice">L’avance supplémentaire doit être justifiée, puis validée par Roger ou Mamihasina avant tout décaissement. Elle ne déclenche aucun transfert automatique.</div><div class="field"><label>Montant demandé (Ar) *</label><input class="control" id="supplementAmount" type="number" min="1" max="${available}" step="1" required></div><div class="field"><label>Motif (10 caractères minimum) *</label><textarea class="control" id="supplementReason" required minlength="10" maxlength="500" placeholder="Dépenses complémentaires de transport pendant le tournage…"></textarea></div>`;
+  return actionModal('Demander une avance complémentaire',inner,'Envoyer la demande',()=>{
+    const amount=Number($('#supplementAmount').value);
+    if(!Number.isSafeInteger(amount)||amount<=0||amount>available)throw Error('Montant supplémentaire incorrect.');
+    return call('requestSupplement',token,id,amount,$('#supplementReason').value);
+  });
+}if(type==='compliant'||type==='correction')return openFinancialReview(type,r);if(type==='proof')return actionModal('Envoyer un justificatif','<div class="notice">Le justificatif sera conservé dans le stockage privé Supabase, visible uniquement par son demandeur et les responsables financiers.</div><div class="field"><label>Fichier PDF ou image (10 Mo maximum) *</label><input class="control" type="file" id="file" accept=".pdf,.jpg,.jpeg,.png,.webp" required></div><div class="field"><label>Commentaire (facultatif)</label><textarea class="control" id="fileNote" maxlength="500" placeholder="Référence de facture, détails…"></textarea></div>','Envoyer le justificatif',async()=>{const f=$('#file').files[0];if(!f)throw Error('Sélectionnez un fichier.');await call('uploadProof',token,id,{file:f,comment:$('#fileNote').value})})}
+function startSupplementAction(type,supplementId,r){
+  const supplement=(state.supplements||[]).find(c=>c.id===supplementId&&c.demande_id===r.id);
+  if(!supplement){toast('Complément introuvable. Actualisez la page.',true);return}
+  if(!canReview(r)||r.controle==='conforme'){toast('Opération non autorisée sur cette demande.',true);return}
+  if(type==='approve'&&supplement.statut==='en_attente'){
+    const content=`<div class="notice">Avance demandée par ${esc(person(supplement.demande_par))} : <b>${esc(ar(supplement.montant_ariary))}</b>. La validation n’effectue aucun paiement.</div><div class="field"><label>Commentaire (facultatif)</label><textarea class="control" id="supplementNote" maxlength="500"></textarea></div>`;
+    return actionModal('Valider l’avance complémentaire',content,'Valider le complément',()=>call('decideSupplement',token,supplementId,'validee',$('#supplementNote').value));
+  }
+  if(type==='reject'&&supplement.statut==='en_attente'){
+    const content=`<div class="field"><label>Motif du refus (obligatoire) *</label><textarea class="control" id="supplementNote" maxlength="500" minlength="5" required></textarea></div>`;
+    return actionModal('Refuser l’avance complémentaire',content,'Confirmer le refus',()=>call('decideSupplement',token,supplementId,'refusee',$('#supplementNote').value));
+  }
+  if(type==='pay'&&supplement.statut==='validee'){
+    const content=`<div class="notice">Montant validé : <b>${esc(ar(supplement.montant_ariary))}</b>. Confirmez seulement lorsque les fonds ont réellement été remis. Aucun virement n’est exécuté par l’application.</div><div class="field"><label>Mode de paiement *</label><select class="control" id="supplementPayMode"><option>Espèces</option><option>Virement</option><option>Mobile Money</option><option>Autre</option></select></div><div class="field"><label>Référence du paiement (facultatif)</label><input class="control" id="supplementPayRef" maxlength="120" placeholder="N° reçu, virement…"></div>`;
+    return actionModal('Décaisser l’avance complémentaire',content,'Enregistrer le décaissement',()=>call('disburseSupplement',token,supplementId,$('#supplementPayMode').value,$('#supplementPayRef').value));
+  }
+  toast('Cette avance a déjà changé de statut. Actualisez la page.',true);
+}
+// Contrôle des justificatifs : la validation finale reste soumise aux vérifications SQL.
+function openFinancialReview(type,r){
+  const docs=state.proofs.filter(p=>p.demande_id===r.id);
+  if(!docs.length){toast('Aucun justificatif à contrôler.',true);return}
+  const payout=Number(r.montant_decaisse_ariary||0);
+  const returned=(state.returns||[]).filter(x=>x.demande_id===r.id).reduce((sum,x)=>sum+Number(x.montant_ariary||0),0);
+  const isCompliant=type==='compliant';
+  if(isCompliant&&(state.supplements||[]).some(c=>c.demande_id===r.id&&['en_attente','validee'].includes(c.statut))){toast('Avance complémentaire en attente de décision ou de paiement : clôture Conforme impossible.',true);return}
+  const fields=docs.map((p,i)=>`<div class="field"><label>Pièce ${i+1} · ${esc(p.nom_fichier)}</label><button class="btn small soft" type="button" data-review-download="${esc(p.id)}">↓ Télécharger pour vérification</button><input class="control" type="number" min="0" step="1" max="1000000000000" data-proof-amount="${esc(p.id)}" placeholder="Montant accepté en ariary" value="${p.montant_justifie_ariary===null||p.montant_justifie_ariary===undefined?'':esc(p.montant_justifie_ariary)}" required></div>`).join('');
+  const inner=`<div class="notice"><b>Montant décaissé :</b> ${esc(ar(payout))}. <b>Déjà restitué :</b> ${esc(ar(returned))}. Vérifiez les montants acceptés : justificatifs + restitutions doivent couvrir exactement le décaissement pour valider « Conforme ».</div>${fields}<div class="notice" id="reviewBalance" aria-live="polite">Total vérifié : —</div><div class="field"><label>${isCompliant?'Commentaire (facultatif)':'Motif de correction (obligatoire, 5 caractères minimum)'}</label><textarea class="control" id="note" maxlength="1000" ${isCompliant?'':'required minlength="5"'} placeholder="${isCompliant?'Référence ou vérification effectuée':'Exemple : reçu insuffisant ou solde non régularisé'}"></textarea></div>`;
+  actionModal(isCompliant?'Contrôle des pièces · Conforme':'Contrôle des pièces · À corriger',inner,isCompliant?'Valider le contrôle':'Demander la correction',async()=>{
+    const values={},inputs=[...document.querySelectorAll('#actionForm [data-proof-amount]')];
+    let total=0;
+    if(inputs.length!==docs.length)throw Error('La liste des justificatifs a changé. Actualisez la page.');
+    for(const input of inputs){
+      const raw=input.value.trim();
+      if(!/^\d+$/.test(raw))throw Error('Renseignez un montant entier pour chaque justificatif.');
+      const amount=Number(raw);
+      if(!Number.isSafeInteger(amount)||amount<0||amount>1000000000000)throw Error('Montant de justificatif incorrect.');
+      values[input.dataset.proofAmount]=amount;
+      total+=amount;
+    }
+    if(isCompliant&&total+returned!==payout)throw Error('Justifié ('+ar(total)+') + restitué ('+ar(returned)+') doit égaler le décaissement ('+ar(payout)+'). Sinon, demandez une correction.');
+    return call('reviewProof',token,r.id,isCompliant?'conforme':'a_corriger',values,$('#note').value);
+  });
+  const updateBalance=()=>{
+    const inputs=[...document.querySelectorAll('#actionForm [data-proof-amount]')];
+    const total=inputs.reduce((v,e)=>v+(Number(e.value)||0),0);
+    const gap=payout-total-returned;
+    $('#reviewBalance').textContent='Justifié : '+ar(total)+' · Restitué : '+ar(returned)+' · '+(gap===0?'Montant équilibré':gap>0?'Solde restant : '+ar(gap):'Dépassement : '+ar(-gap));
+  };
+  document.querySelectorAll('#actionForm [data-proof-amount]').forEach(e=>e.addEventListener('input',updateBalance));
+  document.querySelectorAll('#actionForm [data-review-download]').forEach(b=>b.onclick=()=>runAction(()=>call('downloadProof',token,b.dataset.reviewDownload)));
+  updateBalance();
+}
+function readBase64(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result||'').split(',')[1]||'');reader.onerror=()=>reject(Error('Lecture du fichier impossible.'));reader.readAsDataURL(file)})}
+function createProjectPrompt(){const name=prompt('Nom du nouveau tournage / projet :');if(!name)return;runAction(async()=>{await call('addProject',token,name);toast('Projet créé.');await load()})}
+(async function start(){if(!supabaseClient){showLogin('Impossible de charger la librairie Supabase. Veuillez vérifier votre connexion.');return;}await load()})()
+</script>
+</body>
+</html>
